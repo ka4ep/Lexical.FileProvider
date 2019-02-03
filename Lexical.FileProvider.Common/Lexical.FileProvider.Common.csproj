@@ -13,6 +13,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>IFileProvider</PackageTags>
     <LangVersion>7.2</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

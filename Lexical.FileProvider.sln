@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28407.52
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "docs", "docs\docs.csproj", "{B4A5DCBC-9835-4447-AD78-A346036CFF40}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexical.FileProvider.Zip", "Lexical.FileProvider.Zip\Lexical.FileProvider.Zip.csproj", "{E8AC7D00-54BC-4FAA-BDDF-B5B2F206B869}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexical.FileProvider.SharpZipLib", "Lexical.FileProvider.SharpZipLib\Lexical.FileProvider.SharpZipLib.csproj", "{016F56DA-D03C-41AD-BF14-007522A13700}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexical.FileProvider.SharpCompress", "Lexical.FileProvider.SharpCompress\Lexical.FileProvider.SharpCompress.csproj", "{40F3EE35-E104-4AD7-8B06-EB21A4EB8E0B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexical.FileProvider.Package.Abstractions", "Lexical.FileProvider.Package.Abstractions\Lexical.FileProvider.Package.Abstractions.csproj", "{4A6384DB-363C-486E-8C9B-B439EFDD0CE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexical.FileProvider.Common", "Lexical.FileProvider.Common\Lexical.FileProvider.Common.csproj", "{DF68A61F-D1B5-4757-B508-9A4032937889}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4A5DCBC-9835-4447-AD78-A346036CFF40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4A5DCBC-9835-4447-AD78-A346036CFF40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4A5DCBC-9835-4447-AD78-A346036CFF40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4A5DCBC-9835-4447-AD78-A346036CFF40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8AC7D00-54BC-4FAA-BDDF-B5B2F206B869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8AC7D00-54BC-4FAA-BDDF-B5B2F206B869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8AC7D00-54BC-4FAA-BDDF-B5B2F206B869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8AC7D00-54BC-4FAA-BDDF-B5B2F206B869}.Release|Any CPU.Build.0 = Release|Any CPU
+		{016F56DA-D03C-41AD-BF14-007522A13700}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{016F56DA-D03C-41AD-BF14-007522A13700}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{016F56DA-D03C-41AD-BF14-007522A13700}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{016F56DA-D03C-41AD-BF14-007522A13700}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40F3EE35-E104-4AD7-8B06-EB21A4EB8E0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40F3EE35-E104-4AD7-8B06-EB21A4EB8E0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40F3EE35-E104-4AD7-8B06-EB21A4EB8E0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40F3EE35-E104-4AD7-8B06-EB21A4EB8E0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A6384DB-363C-486E-8C9B-B439EFDD0CE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A6384DB-363C-486E-8C9B-B439EFDD0CE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A6384DB-363C-486E-8C9B-B439EFDD0CE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A6384DB-363C-486E-8C9B-B439EFDD0CE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF68A61F-D1B5-4757-B508-9A4032937889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF68A61F-D1B5-4757-B508-9A4032937889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF68A61F-D1B5-4757-B508-9A4032937889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF68A61F-D1B5-4757-B508-9A4032937889}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FA4D0CB3-B028-46DD-987B-CC17D522FC2B}
+	EndGlobalSection
+EndGlobal

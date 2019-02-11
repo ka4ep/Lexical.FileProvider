@@ -24,7 +24,7 @@ namespace Lexical.FileProvider
         public const bool defaultConvertBackslashesToSlashes = false;
 
         /// <summary>
-        /// Create rar content file provider.
+        /// Create zip content file provider.
         /// </summary>
         /// <param name="archive"></param>
         /// <param name="pathHint">(optional) clue of the file that is being opened</param>
@@ -33,7 +33,7 @@ namespace Lexical.FileProvider
         public _ZipFileProvider(ZipArchive archive, String pathHint = null, DateTimeOffset? dateTime = default, bool convertBackslashesToSlashes = defaultConvertBackslashesToSlashes) : base(archive, pathHint, dateTime, convertBackslashesToSlashes) { }
 
         /// <summary>
-        /// Create file provider that reads rar content from a readable and seekable stream. 
+        /// Create file provider that reads zip content from a readable and seekable stream. 
         /// 
         /// Note, that one file entry stream is allowed to be open at the same time. Others will wait in lock.
         /// 
@@ -45,28 +45,28 @@ namespace Lexical.FileProvider
         /// <param name="dateTime">Date time for folder entries</param>
         /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
         /// <exception cref="IOException">On I/O error</exception>
-        /// <exception cref="PackageException.LoadError">on rar error</exception>
+        /// <exception cref="PackageException.LoadError">on zip error</exception>
         public _ZipFileProvider(Stream stream, String pathHint = null, DateTimeOffset? dateTime = default, bool convertBackslashesToSlashes = defaultConvertBackslashesToSlashes) : base(ZipArchive.Open(stream), pathHint, dateTime, convertBackslashesToSlashes) { }
 
         /// <summary>
-        /// Create file provider that can reopen rar archive for each concurrent thread.
+        /// Create file provider that can reopen zip archive for each concurrent thread.
         /// </summary>
         /// <param name="archiveOpener"></param>
         /// <param name="pathHint">(optional) clue of the file that is being opened</param>
         /// <param name="dateTime">Date time for folder entries</param>
         /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
         /// <exception cref="IOException">On I/O error</exception>
-        /// <exception cref="PackageException.LoadError">on rar error</exception>
+        /// <exception cref="PackageException.LoadError">on zip error</exception>
         public _ZipFileProvider(Func<ZipArchive> archiveOpener, String pathHint = null, DateTimeOffset? dateTime = default, bool convertBackslashesToSlashes = defaultConvertBackslashesToSlashes) : base(archiveOpener, pathHint, dateTime, convertBackslashesToSlashes) { }
 
         /// <summary>
-        /// Open .zip file for reading. Opening from a file allows concurrent reading of rar entries.
+        /// Open .zip file for reading. Opening from a file allows concurrent reading of zip entries.
         /// </summary>
         /// <param name="filename">file name</param>
         /// <param name="pathHint">(optional) clue of the file that is being opened</param>
         /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
         /// <exception cref="IOException">On I/O error</exception>
-        /// <exception cref="PackageException.LoadError">on rar error</exception>
+        /// <exception cref="PackageException.LoadError">on zip error</exception>
         public _ZipFileProvider(string filename, String pathHint = null, DateTimeOffset? dateTime = default, bool convertBackslashesToSlashes = defaultConvertBackslashesToSlashes) : base(()=>ZipArchive.Open(filename), pathHint, dateTime??File.GetLastWriteTimeUtc(filename), convertBackslashesToSlashes) { }
         
         public _ZipFileProvider AddDisposable(object disposable)

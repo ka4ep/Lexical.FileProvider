@@ -7,7 +7,7 @@ File provider class libraries.
 * Lexical.FileProvider.SharpZipLib ([Web](http://lexical.fi/FileProvider/docs/SharpZipLib/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.SharpZipLib/), [Git](https://github.com/tagcode/Lexical.FileProvider/Lexical.FileProvider.SharpZipLib/))
 
 For other commercial packages, see:
-* Lexical.FileProvider.Package ([Web](http://lexical.fi/sdk/FileProvider/docs/Package/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.Package/))
-* Lexical.FileProvider.Dll ([Web](http://lexical.fi/sdk/FileProvider/docs/Dll/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.Dll/))
-* Lexical.FileProvider.Root ([Web](http://lexical.fi/sdk/FileProvider/docs/root/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.Root/))
-* Lexical.FileProvider.Utils ([Web](http://lexical.fi/sdk/FileProvider/docs/Utils/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.Utils/)
+* Lexical.FileProvider.Package ([Web](http://lexical.fi/sdk/FileProvider/docs/Package/index.html))
+* Lexical.FileProvider.Dll ([Web](http://lexical.fi/sdk/FileProvider/docs/Dll/index.html))
+* Lexical.FileProvider.Root ([Web](http://lexical.fi/sdk/FileProvider/docs/root/index.html))
+* Lexical.FileProvider.Utils ([Web](http://lexical.fi/sdk/FileProvider/docs/Utils/index.html)

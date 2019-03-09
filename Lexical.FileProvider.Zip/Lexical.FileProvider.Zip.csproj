@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.12.0</Version>
+    <Version>0.12.1</Version>
     <Authors>Toni Kalajainen</Authors>
     <Company>Lexical</Company>
     <Description>File provider and package loader that can open .zip archives recursively. Uses System.IO.Compression.</Description>
@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lexical.FileProvider.Common\Lexical.FileProvider.Common.csproj" />
-    <ProjectReference Include="..\Lexical.FileProvider.Package.Abstractions\Lexical.FileProvider.Package.Abstractions.csproj" />
+    <ProjectReference Include="..\Lexical.FileProvider.Package.Abstractions\Lexical.FileProvider.Package.Abstractions.csproj" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

@@ -1,3 +1,13 @@
+# Links
+* Lexical.FileProvider.Package ([Web](http://lexical.fi/FileProvider/docs/Package/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Package))
+* Lexical.FileProvider.Package.Abstractions ([Web](http://lexical.fi/FileProvider/docs/Package.Abstractions/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.Abstractions/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.Abstractions/Package))
+* Lexical.FileProvider.Zip ([Web](http://lexical.fi/FileProvider/docs/Zip/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Zip))
+* Lexical.FileProvider.SharpCompress ([Web](http://lexical.fi/FileProvider/docs/SharpCompress/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.SharpCompress/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.SharpCompress))
+* Lexical.FileProvider.SharpZipLib ([Web](http://lexical.fi/FileProvider/docs/SharpZipLib/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.SharpZipLib/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.SharpZipLib))
+* Lexical.FileProvider.Dll ([Web](http://lexical.fi/FileProvider/docs/Dll/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.Dll/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.Dll))
+* Lexical.FileProvider.Root ([Web](http://lexical.fi/FileProvider/docs/Root/index.html), [NuGet](), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Root))
+* Lexical.FileProvider.Utils ([Web](http://lexical.fi/FileProvider/docs/Utils/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Utils))
+
 # Introduction
 **PackageFileProvider** is a file provider that can open different package file formats, such as .zip and .dll.
 
@@ -440,13 +450,5 @@ using (var service = serviceCollection.BuildServiceProvider())
     foreach (string filepath in fp.ListAllPaths())
         Console.WriteLine(filepath);
 }
+```
 
-# Links
-* Lexical.FileProvider.Package ([Web](http://lexical.fi/FileProvider/docs/Package/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Package))
-* Lexical.FileProvider.Package.Abstractions ([Web](http://lexical.fi/FileProvider/docs/Package.Abstractions/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.Abstractions/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.Abstractions/Package))
-* Lexical.FileProvider.Zip ([Web](http://lexical.fi/FileProvider/docs/Zip/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Zip))
-* Lexical.FileProvider.SharpCompress ([Web](http://lexical.fi/FileProvider/docs/SharpCompress/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.SharpCompress/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.SharpCompress))
-* Lexical.FileProvider.SharpZipLib ([Web](http://lexical.fi/FileProvider/docs/SharpZipLib/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.SharpZipLib/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.SharpZipLib))
-* Lexical.FileProvider.Dll ([Web](http://lexical.fi/FileProvider/docs/Dll/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.Dll/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.Dll))
-* Lexical.FileProvider.Root ([Web](http://lexical.fi/FileProvider/docs/Root/index.html), [NuGet](), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Root))
-* Lexical.FileProvider.Utils ([Web](http://lexical.fi/FileProvider/docs/Utils/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Utils))

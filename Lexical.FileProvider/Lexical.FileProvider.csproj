@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Version>0.13.0</Version>
+    <Authors>Toni Kalajainen</Authors>
+    <Company>Lexical</Company>
+    <Description>File provider that can drill down into package files by using other IFileProviders.
+
+For example: "somefile.zip/my.dll/my.embedded.resources"</Description>
+    <Copyright>Toni Kalajainen</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>http://lexical.fi/FileProvider/docs/index.html</PackageProjectUrl>
+    <PackageIconUrl>http://lexical.fi/theme/logo_blue.svg</PackageIconUrl>
+    <RepositoryUrl>https://github.com/tagcode/Lexical.FileProvider</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>IFileProvider fileprovider package archive lexical</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE" Link="LICENSE">
+      <PackagePath></PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.2.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.2.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lexical.FileProvider.Abstractions\Lexical.FileProvider.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Version>0.13.0</Version>
+    <Authors>Toni Kalajainen</Authors>
+    <Description>Abstractions for IFileprovider that can open package files. For example "myfile.zip/mylib.dll/mylib.resources"
+</Description>
+    <Copyright>Toni Kalajainen</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>http://lexical.fi/FileProvider/docs/Package.Abstractions/index.html</PackageProjectUrl>
+    <PackageIconUrl>http://lexical.fi/theme/logo_blue.svg</PackageIconUrl>
+    <RepositoryUrl>https://github.com/tagcode/Lexical.FileProvider</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>IFileProvider fileprovider package archive lexical</PackageTags>
+    <Company>Lexical</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

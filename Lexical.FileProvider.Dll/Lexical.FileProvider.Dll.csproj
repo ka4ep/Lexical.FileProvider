@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.13.0</Version>
+    <Authors>Toni Kalajainen</Authors>
+    <Company>Lexical</Company>
+    <Description>File provider and package loader that reads embedded resources from managed .dll files by using Mono.Cecil.</Description>
+    <Copyright>Toni Kalajainen</Copyright>
+    <PackageLicenseUrl>http://lexical.fi/License/FileProvider/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://lexical.fi/FileProvider/docs/Dll/index.html</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tagcode/Lexical.FileProvider</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>IFileProvider fileprovider dll embedded IPackageLoader</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <LangVersion>7.3</LangVersion>
+    <RootNamespace>Lexical.FileProvider</RootNamespace>
+    <PackageIconUrl>http://lexical.fi/theme/logo_blue.svg</PackageIconUrl>
+    <PackageId>Lexical.FileProvider.Dll</PackageId>
+    <AssemblyName>Lexical.FileProvider.Dll</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>N:\Lexical\FileProvider\Lexical.FileProvider.Dll\Lexical.FileProvider.Dll.xml</DocumentationFile>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="2.*" PrivateAssets="all" />
+    <PackageReference Include="Mono.Cecil" Version="0.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lexical.FileProvider.Abstractions\Lexical.FileProvider.Abstractions.csproj" />
+    <ProjectReference Include="..\Lexical.FileProvider\Lexical.FileProvider.csproj" />
+  </ItemGroup>
+
+</Project>

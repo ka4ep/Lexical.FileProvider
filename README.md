@@ -5,7 +5,7 @@
 * Lexical.FileProvider.SharpCompress ([Web](http://lexical.fi/FileProvider/docs/SharpCompress/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.SharpCompress/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.SharpCompress))
 * Lexical.FileProvider.SharpZipLib ([Web](http://lexical.fi/FileProvider/docs/SharpZipLib/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.SharpZipLib/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.SharpZipLib))
 * Lexical.FileProvider.Dll ([Web](http://lexical.fi/FileProvider/docs/Dll/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider.Dll/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider.Dll))
-* Lexical.FileProvider.Root ([Web](http://lexical.fi/FileProvider/docs/Root/index.html), [NuGet](), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Root))
+* Lexical.FileProvider.Root ([Web](http://lexical.fi/FileProvider/docs/Root/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Root))
 * Lexical.FileProvider.Utils ([Web](http://lexical.fi/FileProvider/docs/Utils/index.html), [NuGet](https://www.nuget.org/packages/Lexical.FileProvider/), [Git](https://github.com/tagcode/Lexical.FileProvider/tree/master/Lexical.FileProvider/Utils))
 
 # Introduction
@@ -36,6 +36,15 @@ IPackageFileProviderOptions options =
 PackageFileProvider fileProvider = new PackageFileProvider(root, options);
 ```
 
+List package contents. Extension method in Lexical.FileProvider.Utils **.ListAllFileInfoAndPath()** visits IFileInfo and corresponding paths recursively.
+
+```csharp
+string path = Directory.GetCurrentDirectory();
+
+foreach ((IFileInfo, String) pair in fileProvider.ListAllFileInfoAndPath(path).OrderBy(pair => pair.Item2))
+    Console.WriteLine(pair.Item2 + (pair.Item1.IsDirectory ? "/" : ""));
+```
+
 Packages are opened as folders.
 
 ```none
@@ -48,15 +57,6 @@ mydata.zip/Folder/data.zip/Lexical.Localization.Tests.dll/Lexical.Localization.T
 ...
 ```
 
-List package contents. Extension method in Lexical.FileProvider.Utils **.ListAllFileInfoAndPath()** visits IFileInfo and corresponding paths recursively.
-
-```csharp
-string path = Directory.GetCurrentDirectory();
-
-foreach ((IFileInfo, String) pair in fileProvider.ListAllFileInfoAndPath(path).OrderBy(pair => pair.Item2))
-    Console.WriteLine(pair.Item2 + (pair.Item1.IsDirectory ? "/" : ""));
-```
-
 # Disposing
 File provider must be disposed after use. The root provider too.
 
@@ -65,7 +65,7 @@ fileProvider.Dispose();
 root.Dispose();
 ```
 
-Root file provider can be attached to be disposed along with the *PackageFileProvider*. 
+An alternative way is to attach RootFileProvider to be disposed along with the *PackageFileProvider*. 
 
 ```csharp
 // Create root
@@ -74,13 +74,6 @@ IFileProvider root = new RootFileProvider();
 PackageFileProvider fileProvider = new PackageFileProvider(root).AddDisposable(root);
 // Disposes both fileProvider and its root
 fileProvider.Dispose();
-```
-
-Disposable can be attached with a delegate **Func&lt;PackageFileProvider, object&gt;**.
-
-```csharp
-// Create package provider and attach root to be disposed
-PackageFileProvider fileProvider = new PackageFileProvider( new RootFileProvider() ).AddDisposable( p=>p.FileProvider );
 ```
 
 # Options

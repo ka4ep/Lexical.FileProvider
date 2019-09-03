@@ -1,0 +1,2090 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lexical.FileProvider</name>
+    </assembly>
+    <members>
+        <member name="T:Lexical.FileProvider.Common.ArchiveDirectoryEntry">
+            <summary>
+            Represents a directory in an archive file.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveDirectoryEntry.NO_DIRS">
+            <summary>
+            No directories.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveDirectoryEntry.directories">
+            <summary>
+            Directories
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveDirectoryEntry.files">
+            <summary>
+            List of files
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.ArchiveDirectoryEntry.Directories">
+            <summary>
+            List of sub directories
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.ArchiveDirectoryEntry.Files">
+            <summary>
+            List of files
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveDirectoryEntry.entries">
+            <summary>
+            Cached combination of directories and files.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.ArchiveDirectoryEntry.Entries">
+            <summary>
+            Combination of files and directories.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.ArchiveDirectoryEntry.Item(System.Int32)">
+            <summary>
+            Index to entries
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.ArchiveDirectoryEntry.Name">
+            <summary>
+            Name
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveDirectoryEntry.#ctor(System.String,System.DateTimeOffset,System.Collections.Generic.IEnumerable{Lexical.FileProvider.Common.ArchiveDirectoryEntry},System.Collections.Generic.IEnumerable{Lexical.FileProvider.Common.ArchiveFileEntry})">
+            <summary>
+            Create archive directory
+            </summary>
+            <param name="name">canonized directory path</param>
+            <param name="date">last modified date</param>
+            <param name="dirs">(optional) list of dirs</param>
+            <param name="files">(optional) list of files</param>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveDirectoryEntry.GetDirectory(System.String)">
+            <summary>
+            Find directory
+            </summary>
+            <param name="subpath">canonized path</param>
+            <returns>directory or null if was not found</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveDirectoryEntry.GetFile(System.String)">
+            <summary>
+            Find file
+            </summary>
+            <param name="canonizedPath">file path</param>
+            <returns>file or null</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.ArchiveFileEntry">
+            <summary>
+            Represents a file entry in an archive.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveFileEntry.NO_FILES">
+            <summary>
+            No files.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveFileEntry.streamProvider">
+            <summary>
+            Reference to object that opens streams.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveFileEntry.Identifier">
+            <summary>
+            Entry name as it is in the archive file.
+            The identifier that is given to the <see cref="F:Lexical.FileProvider.Common.ArchiveFileEntry.streamProvider"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveFileEntry.#ctor(Lexical.FileProvider.Common.IStreamProvider,System.String,System.String,System.Int64,System.DateTimeOffset)">
+            <summary>
+            Create new file entry.
+            </summary>
+            <param name="streamProvider">object that opens streams</param>
+            <param name="identifier">identifier that is given to <paramref name="streamProvider"/></param>
+            <param name="name">name of the file within its parent folder context</param>
+            <param name="length">length of file</param>
+            <param name="lastModified">last accessed date, utc</param>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveFileEntry.CreateReadStream">
+            <summary>
+            Open stream. The caller must dispose the stream
+            </summary>
+            <returns>stream</returns>
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.ArchiveFileProvider">
+            <summary>
+            Base implementation for archive file provider. 
+            Is initialized at subtype constructor with read-only tree representation of directories and files.
+            Files are opened through <see cref="T:Lexical.FileProvider.Common.IStreamProvider"/> interface, which is assigned to <see cref="F:Lexical.FileProvider.Common.ArchiveFileProvider.streamProvider"/> field.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveFileProvider.belatedDisposeList">
+            <summary>
+            Dispose list for belated disposables.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveFileProvider.root">
+            <summary>
+            Root directory info.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveFileProvider.streamProvider">
+            <summary>
+            Object that opens streams for <see cref="T:Microsoft.Extensions.FileProviders.IFileInfo"/>s.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ArchiveFileProvider.HintPath">
+            <summary>
+            Subpath of the archive.
+            
+            Not used for anything, but gives better debug messages.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveFileProvider.#ctor(System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create archive content file provider.
+            </summary>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="lastModified">Date time for folder entries</param>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveFileProvider.GetFileInfo(System.String)">
+            <summary>
+            Search file from the read-only archive index.
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveFileProvider.GetDirectoryContents(System.String)">
+            <summary>
+            Search directory from the read-only directory index.
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveFileProvider.CanonizePath(System.String)">
+            <summary>
+            Removes trailing and preceding slashes.
+            E.g. "/folder/subfolder/" -> "folder/subfolder"
+            </summary>
+            <param name="path"></param>
+            <returns>path</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveFileProvider.innerDispose(System.Collections.Generic.List{System.Exception}@)">
+            <summary>
+            Forwards dispose to <see cref="F:Lexical.FileProvider.Common.ArchiveFileProvider.streamProvider"/>. Marks this class disposed.
+            </summary>
+            <param name="disposeErrors"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ArchiveFileProvider.ToString">
+            <summary>
+            Prints class name. Adds filename if it's known.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.StreamProvider">
+            <summary>
+            Disposable version of <see cref="T:Lexical.FileProvider.Common.IStreamProvider"/>.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.BelatedDisposeList">
+            <summary>
+            A disposable that manages a list of disposable objects.
+            
+            Handles can be taken to postpone calling of the disposables.
+            BelatedDisposeList itself has notdisposed/disposing/disposed state that is separate 
+            from the dispose of the belated disposables.
+            
+            It will dispose them all when Dispose() is called and all handles are disposed.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.BelatedDisposeList.counter">
+            <summary>
+            Internal counter. 
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.BelatedDisposeList.disposeList">
+            <summary>
+            List of disposables that has been attached with this object.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.BelatedDisposeList.disposing">
+            <summary>
+            State that is set when disposing starts and finalizes.
+            Is changed with Interlocked. 
+             0 - not disposed
+             1 - disposing
+             2 - disposed
+             
+            When disposing starts, new objects cannot be added to the object, instead they are disposed right at away.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.BelatedDisposeList.IsDisposing">
+            <summary>
+            Property that checks thread-synchronously whether disposing has started or completed.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.BelatedDisposeList.IsDisposed">
+            <summary>
+            Property that checks thread-synchronously whether disposing has started.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.BelatedDisposeList.handleDisposeAction">
+            <summary>
+            Action that handles call to decrement counter and dispose disposelist.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.BelatedDisposeList.handleFactory">
+            <summary>
+            Factory that creates handles
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.#ctor">
+            <summary>
+            Create belated list
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.#ctor(System.Func{System.Object,System.Action,System.IDisposable})">
+            <summary>
+            Create belated list
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.Lexical#FileProvider#Common#IBelatedDisposeList#Belate">
+            <summary>
+            Create a handle that delays dispose.
+            </summary>
+            <returns>handle</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.Belate(System.Object)">
+            <summary>
+            Create a handle that delays dispose.
+            </summary>
+            <param name="state"></param>
+            <returns>handle</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.Lexical#FileProvider#Common#IBelatedDisposeList#AddBelatedDispose(System.IDisposable)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed with the file provider.
+            
+            If parent object is disposed or being disposed, the disposable will be disposed immedialy.
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if was added to list, false if was disposed right away</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.Lexical#FileProvider#Common#IBelatedDisposeList#RemoveBelatedDispose(System.IDisposable)">
+            <summary>
+            Remove <paramref name="disposable"/> from list of attached disposables.
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if an item of <paramref name="disposable"/> was removed, false if it wasn't there</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.Lexical#FileProvider#Common#IBelatedDisposeList#RemovedBelatedDisposes(System.Collections.Generic.IEnumerable{System.IDisposable})">
+            <summary>
+            Remove <paramref name="disposables"/> from the list. 
+            </summary>
+            <param name="disposables"></param>
+            <returns>true if was removed, false if it wasn't in the list.</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.DisposeAndCapture(System.Collections.Generic.IEnumerable{System.IDisposable},System.Collections.Generic.List{System.Exception}@)">
+            <summary>
+            Dispose enumerable and capture errors
+            </summary>
+            <param name="disposables">list of disposables</param>
+            <param name="disposeErrors">list to be created if errors occur</param>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.DisposeDisposableList">
+            <summary>
+            Dispose dispose lists.
+            </summary>
+            <exception cref="T:System.AggregateException">thrown if disposing threw errors</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.BelatedDisposeList.innerDispose(System.Collections.Generic.List{System.Exception}@)">
+            <summary>
+            Override this to add more dispose mechanism in subtypes.
+            
+            Inner dispose is not called when the disposable list is disposed.
+            It is called when the BelatedDisposeList is disposed.
+            </summary>
+            <param name="disposeErrors">list that can be instantiated and where errors can be added</param>
+            <exception cref="T:System.Exception">any exception is captured and aggregated with other errors</exception>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.DisposeList">
+            <summary>
+            A disposable that manages a list of disposable objects.
+            It will dispose them all at Dispose().
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.DisposeList.disposeList">
+            <summary>
+            List of disposables that has been attached with this object.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.DisposeList.disposing">
+            <summary>
+            State that is set when disposing starts and finalizes.
+            Is changed with Interlocked. 
+             0 - not disposed
+             1 - disposing
+             2 - disposed
+             
+            When disposing starts, new objects cannot be added to the object, instead they are disposed right at away.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.DisposeList.IsDisposing">
+            <summary>
+            Property that checks thread-synchronously whether disposing has started or completed.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.DisposeList.IsDisposed">
+            <summary>
+            Property that checks thread-synchronously whether disposing has started.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.DisposeList.Dispose">
+            <summary>
+            
+            </summary>
+            <exception cref="T:System.AggregateException">thrown if disposing threw errors</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.DisposeList.innerDispose(System.Collections.Generic.List{System.Exception}@)">
+            <summary>
+            Override this to add more dispose mechanism in subtypes
+            </summary>
+            <param name="disposeErrors">list that can be instantiated and where errors can be added</param>
+            <exception cref="T:System.Exception">any exception is captured and aggregated with other errors</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.DisposeList.Lexical#FileProvider#Common#IDisposeList#AddDisposable(System.IDisposable)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed with the file provider.
+            
+            If parent object is disposed or being disposed, the disposable will be disposed immedialy.
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if was added to list, false if was disposed right away</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.DisposeList.Lexical#FileProvider#Common#IDisposeList#RemoveDisposable(System.IDisposable)">
+            <summary>
+            Remove <paramref name="disposable"/> from list of attached disposables.
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if an item of <paramref name="disposable"/> was removed, false if it wasn't there</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.DisposeList.Lexical#FileProvider#Common#IDisposeList#RemoveDisposables(System.Collections.Generic.IEnumerable{System.IDisposable})">
+            <summary>
+            Remove <paramref name="disposables"/> from the list. 
+            </summary>
+            <param name="disposables"></param>
+            <returns>true if was removed, false if it wasn't in the list.</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.DisposeList.DisposeAndCapture(System.Collections.Generic.IEnumerable{System.IDisposable},System.Collections.Generic.List{System.Exception}@)">
+            <summary>
+            Dispose enumerable and capture errors
+            </summary>
+            <param name="disposables">list of disposables</param>
+            <param name="disposeErrors">list to be created if errors occur</param>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.FileProviderHandle">
+            <summary>
+            Handle and proxy of <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/>.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.FileProviderHandle.disposeAction">
+            <summary>
+            (optional) Action to be executed when proxy is disposed.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.FileProviderHandle.Target">
+            <summary>
+            Dispose target
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.FileProviderHandle.state">
+            <summary>
+            Object to be used as <see cref="F:Lexical.FileProvider.Common.FileProviderHandle.disposeAction"/>'s argument.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.FileProviderHandle.fileProvider">
+            <summary>
+            Source file provider
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.FileProviderHandle.disposing">
+            <summary>
+            0 - is not disposed
+            1 - is disposed
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.FileProviderHandle.IsDisposed">
+            <summary>
+            Tests whether object is disposed
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.FileProviderHandle.#ctor(System.Action{System.Object},System.Object,Microsoft.Extensions.FileProviders.IFileProvider)">
+            <summary>
+            Create new handle to file provider.
+            </summary>
+            <param name="parent">(optional) parent that is notified of dispose</param>
+            <param name="state">(optional) action's argument</param>
+            <param name="fileProvider"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.FileProviderHandle.GetDirectoryContents(System.String)">
+            <summary>
+            Forwards calls to 
+            </summary>
+            <param name="subpath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.FileUtils.ReadFully(System.IO.Stream)">
+            <summary>
+            Read stream fully into byte[].
+            </summary>
+            <param name="s"></param>
+            <returns></returns>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.FileUtils.CopyToFile(Microsoft.Extensions.FileProviders.IFileInfo,System.String)">
+            <summary>
+            Copy <paramref name="fileInfo"/> to a <paramref name="filename"/>. <paramref name="filename"/> must be exist and be size 0. 
+            
+            Returns an open stream to the file at position 0 with contents copied from <paramref name="fileInfo"/>.
+            </summary>
+            <param name="fileInfo"></param>
+            <param name="filename"></param>
+            <returns>open file stream</returns>
+            <exception cref="T:System.IO.IOException">if something failed</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.FileUtils.ReadMemorySnapshot(Microsoft.Extensions.FileProviders.IFileInfo)">
+            <summary>
+            Read fileinfo into memory snapshot
+            </summary>
+            <param name="fileInfo"></param>
+            <returns>bytes</returns>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IBelatedDisposeList.Belate">
+            <summary>
+            Create a handle that delays dispose of dispose list.
+            </summary>
+            <returns>handle</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IBelatedDisposeList.AddBelatedDispose(System.IDisposable)">
+            <summary>
+            Add <paramref name="disposable"/> that is to be disposed along with the called object once all belated handles are disposed.
+            
+            If the implementing object has already been disposed, this method immediately disposes the <paramref name="disposable"/>.
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if was added to list, false if wasn't but was disposed immediately</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IBelatedDisposeList.AddBelatedDisposes(System.Collections.Generic.IEnumerable{System.IDisposable})">
+            <summary>
+            Add <paramref name="disposables"/> that are going to be disposed along with the called object once all belated handles are disposed.
+            
+            If the implementing object has already been disposed, this method immediately disposes the <paramref name="disposables"/>.
+            </summary>
+            <param name="disposables"></param>
+            <returns>true if were added to list, false if were disposed immediately</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IBelatedDisposeList.RemoveBelatedDispose(System.IDisposable)">
+            <summary>
+            Remove <paramref name="disposable"/> from the list. 
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if was removed, false if it wasn't in the list.</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IBelatedDisposeList.RemovedBelatedDisposes(System.Collections.Generic.IEnumerable{System.IDisposable})">
+            <summary>
+            Remove <paramref name="disposables"/> from the list. 
+            </summary>
+            <param name="disposables"></param>
+            <returns>true if was removed, false if it wasn't in the list.</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.IDisposeList">
+            <summary>
+            Object that can be attached with <see cref="T:System.IDisposable"/>.
+            They will be disposed along with the object.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IDisposeList.AddDisposable(System.IDisposable)">
+            <summary>
+            Add <paramref name="disposable"/> that is to be disposed along with the called object.
+            
+            If the implementing object has already been disposed, this method immediately disposes the <paramref name="disposable"/>.
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if was added to list, false if wasn't but was disposed immediately</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IDisposeList.AddDisposables(System.Collections.Generic.IEnumerable{System.IDisposable})">
+            <summary>
+            Add <paramref name="disposables"/> that are going to be disposed along with the called object.
+            
+            If the implementing object has already been disposed, this method immediately disposes the <paramref name="disposables"/>.
+            </summary>
+            <param name="disposables"></param>
+            <returns>true if were added to list, false if were disposed immediately</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IDisposeList.RemoveDisposable(System.IDisposable)">
+            <summary>
+            Remove <paramref name="disposable"/> from the list. 
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if was removed, false if it wasn't in the list.</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IDisposeList.RemoveDisposables(System.Collections.Generic.IEnumerable{System.IDisposable})">
+            <summary>
+            Remove <paramref name="disposables"/> from the list. 
+            </summary>
+            <param name="disposables"></param>
+            <returns>true if was removed, false if it wasn't in the list.</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IStreamProvider.OpenStream(System.String)">
+            <summary>
+            Try to open a stream to a file.
+            The caller take ownership of the stream and must close it.
+            </summary>
+            <param name="identifier"></param>
+            <returns>stream or null.</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.ObserverHandle`1">
+            <summary>
+            A disposable handle that represents one subscription of <see cref="!:T"/> from <see cref="T:System.IObservable`1"/>.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ObserverHandle`1.unsubscribeAction">
+            <summary>
+            Unsubscribe action
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ObserverHandle`1.observer">
+            <summary>
+            subscribed observer
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.ObserverHandle`1.disposing">
+            <summary>
+            0 - not disposed
+            1 - is disposed
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.ObserverHandle`1.IsDisposed">
+            <summary>
+            Tests if handle has been disposed.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ObserverHandle`1.Dispose">
+            <summary>
+            Dispose handle which will unsubscribe the observer.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.StreamOpener">
+            <summary>
+            Stream provider that provides a stream for only one entry name.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.StreamOpener.streamOpener">
+            <summary>
+            Function that opens stream
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.StreamOpener.entryName">
+            <summary>
+            Entry name
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Common.StreamOpener.belateSource">
+            <summary>
+            Belate dispose source
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.ManifestEmbeddedFileProvider">
+            <summary>
+            Loads assembly into an AppDomain, and disposes it in exit.
+            
+            Cannot load assembly if its dependency is not found. There is no ReflectionOnlyLoad in .NET Standard 2.0. 
+            
+            This implementation doesn't work very well and its use is discouraged. Please use DllPackageLoader instead.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.ManifestEmbeddedFileProvider.Singleton">
+            <summary>
+            Static singleton instance
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.ManifestEmbeddedFileProvider.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.ManifestEmbeddedFileProvider.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Load from byte[]
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.IPackageProvider.TryOpenPackage(Lexical.FileProvider.Package.PackageFileReference)">
+            <summary>
+            Open a package at a <paramref name="path"/>.
+            
+            Returns a handle to file provider. File provider will not be evicted until the handle is disposed.
+            
+            Returns null, if package failed to open because the error was expected and was suppressed.
+            </summary>
+            <param name="path">package refrence, if null then refers to root file provider</param>
+            <returns>
+                    a handle, to a fileprovider. The handle must be disposed.
+                    null value, if package failed to open and the error was suppressed. That means that the file is not a package (wrong file format).
+            </returns>
+            <exception cref="!:ObjectDisposedException">if the opener was disposed</exception>
+            <exception cref="!:Exception">any non-suppressed error that occured when the package was opened. This error can be of a previously cached open attempt. </exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions_CacheEvict_Ext.StartEvictTimer(Lexical.FileProvider.Package.PackageFileProvider,Microsoft.Extensions.Options.IOptionsMonitor{Lexical.FileProvider.Package.PackageFileProviderOptionsRecord})">
+            <summary>
+            Set cache eviction mechanism.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="options">Options that has CacheEvictTime property.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions_Logger.SetToSuppressAndLogErrors(Lexical.FileProvider.Package.IPackageFileProviderOptions,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Configure package file provider to log errors, and to suppress them.
+            </summary>
+            <param name="options"></param>
+            <param name="logger"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions_Logger.SetToThrowAndLogErrors(Lexical.FileProvider.Package.IPackageFileProviderOptions,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Configure package file provider to log errors and then throw them.
+            </summary>
+            <param name="options"></param>
+            <param name="logger"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions_Logger.AddLogger(Lexical.FileProvider.Package.IObservablePackageFileProvider,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Add logger to package file provider.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="logger">(optional) logger</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions_Logger.AddLogger(Lexical.FileProvider.Package.IObservablePackageFileProvider,Microsoft.Extensions.Logging.ILogger,Microsoft.Extensions.Logging.LogLevel)">
+            <summary>
+            Add logger to package file provider.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="logger">(optional) logger</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageFileProviderOptionsMonitor">
+            <summary>
+            Adapts <see cref="T:Lexical.FileProvider.Package.PackageFileProviderOptionsRecord"/> to <see cref="T:Lexical.FileProvider.Package.IPackageFileProviderOptions"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionsMonitor.Assign(Lexical.FileProvider.Package.PackageFileProviderOptionsRecord,Lexical.FileProvider.Package.IPackageFileProviderOptions)">
+            <summary>
+            Copies configuration from poco <paramref name="src"/> to <paramref name="dst"/>.
+            
+            Since packageloaders are type names in the poco, any new type will be loaded and instantiated.
+            </summary>
+            <param name="src"></param>
+            <param name="dst"></param>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageFileProviderOptionsRecord">
+            <summary>
+            IOptions compatible POCO record for <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptionsRecord.CacheEvictTime">
+            <summary>
+            Number of seconds to keep inactive package in cache. 
+            If package hasn't been used after this time, it will be evited.
+            
+            If value is 0 then evict is disabled.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptionsValidator.Level0">
+            <summary>
+            Validator that doesn't check if package loaders are found.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptionsValidator.Level1">
+            <summary>
+            Validator that tests if package loader types and assemblies are found.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptionsValidator.Level2">
+            <summary>
+            Validator that tries to instantiate package loaders.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProviderOptionsValidator.ValidationLevel">
+            <summary>
+            Level of validation:
+              0 - Checks package loader is not null
+              1 - Checks if type is loaded
+              2 - Tries to instantiate package loader
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionsValidator.#ctor(System.Int32)">
+            <summary>
+            Create validator
+            </summary>
+            <param name="validationLevel">true if validator should try to load PackageLoader Type to verify that it exists</param>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.TempFileProviderOptionsMonitor">
+            <summary>
+            Adapts <see cref="!:TempFileProviderOptionsRecord"/> to <see cref="!:ITempFileProviderOptions"/>.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.TempFileProviderOptionsValidator">
+            <summary>
+            Validates <see cref="T:Lexical.FileProvider.Common.TempFileProviderOptions"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.TempFileProviderOptionsValidator.Singleton">
+            <summary>
+            Validator that doesn't check if package loaders are found.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.TempFileProviderOptionsValidator.InvalidFilenamePattern">
+            <summary>
+            Pattern that validates against valid filename characters
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.TempFileProviderOptionsValidator.InvalidPathPattern">
+            <summary>
+            Pattern that validates against valid path characters (excluding %)
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.NullDirectoryContents">
+            <summary>
+            File and directory info for query null.
+            Converts fileinfos into packages.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.NullDirectoryContents.packageProvider">
+            <summary>
+            Package provider that can open and lock packages
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageDirectoryContents">
+            <summary>
+            A reference to a directory in a package. 
+            
+            This class can be used for loading directories even if they have been evited from parent's cache.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageDirectoryContents.packageProvider">
+            <summary>
+            Package provider that can open and lock packages
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageDirectoryContents.directoryReference">
+            <summary>
+            File reference.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageEntry">
+            <summary>
+            This class represents the record value that is used with cache.
+            
+            This class is internal to and part of <see cref="T:Lexical.FileProvider.Package.PackageFileProvider"/>.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageEntry.length">
+            <summary>
+            File provider memory impact length estimate.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageEntry.handleCount">
+            <summary>
+            The number of open handles to this package entry
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageEntry.CreateHandle">
+            <summary>
+            Create a handle that prevents the package entry from being evicted.
+            If won't, however, prevent it from being disposed.
+            </summary>
+            <returns>fileprovider handle that must be disposed</returns>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageEntry.handleDisposeAction">
+            <summary>
+            Release handle action
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageEntryExtensions.AddDisposable(Lexical.FileProvider.Package.PackageEntry,System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with <paramref name="packageEntry"/>.
+            
+            If <paramref name="disposable"/> is not <see cref="T:System.IDisposable"/>, then it's not added.
+            </summary>
+            <param name="packageEntry"></param>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageEntryExtensions.AddDisposables(Lexical.FileProvider.Package.PackageEntry,System.Collections.IEnumerable)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with <paramref name="packageEntry"/>.
+            
+            If <paramref name="disposable"/> is not <see cref="T:System.IDisposable"/>, then it's not added.
+            </summary>
+            <param name="packageEntry"></param>
+            <param name="disposables">object(s) to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageFileInfo">
+            <summary>
+            A reference to a file in a package. 
+            
+            This class can be used for loading files even if they have been evited from parent's cache.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileInfo.packageProvider">
+            <summary>
+            Package provider that can open and lock packages
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileInfo.fileReference">
+            <summary>
+            File reference.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileInfo.filename">
+            <summary>
+            Cached filename without directory.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileInfo.Name">
+            <summary>
+            Filename without directory.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileInfo.MakeFilename">
+            <summary>
+            Separate directory from file path.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageFileProvider">
+            <summary>
+            File provider that can open files as packages.
+            
+            The package separator character is always '/'.
+               For example: "folder/myfile.zip/folder/somelib.dll/somelib.resources"
+            
+            If root provider is PhysicalFileProvider and is ran on windows, then path names can be ambiguous.
+            For instance, a path with back-slashes "folder\myfile.zip" refers to same file as with slashes "folder/myfile.zip"
+            
+            For caching purposes, the cache key must be canonized so that same entry is not opened multiple times. 
+            In the canonized format the directory separator is '/'.
+            
+            Note however that back-slashes are valid characters for filenames on linux and in packages. 
+            For example, a linux compressed .tar.gz file can have files with back-slashes in the file name. 
+            To be able to open these files, canonicalization is applied only to physical filenames, and on windows.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.FileProvider">
+            <summary>
+            The root file provider.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.packages">
+            <summary>
+            Dictionary of packages.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.pattern">
+            <summary>
+            Pattern that captures package files names.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.packageLoadersSource">
+            <summary>
+            Reference that was the source of package loaders. Change in reference triggers reload. 
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProvider.Pattern">
+            <summary>
+            Lazy getter of pattern.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.options">
+            <summary>
+            Options
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProvider.Options">
+            <summary>
+            Package file provider options.
+            Setting new options, wipes the cached pattern.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.tempFileProvider">
+            <summary>
+            Temp File PRovider
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProvider.TempFileProvider">
+            <summary>
+            Temp File PRovider
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProvider.validOptions">
+            <summary>
+            Validated options property.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">If Options is null</exception>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProvider.validPackageLoaders">
+            <summary>
+            Validated package loaders property.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">If Options or PackageLoaders is null</exception>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.needsCanonizalization">
+            <summary>
+            Set to true whether paths need canonicalization.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.#ctor(Microsoft.Extensions.FileProviders.IFileProvider,Lexical.FileProvider.Package.IPackageFileProviderOptions,Lexical.FileProvider.Common.ITempFileProvider)">
+            <summary>
+            Create new package file provider.
+            </summary>
+            <param name="rootFileProvider">root file provider</param>
+            <param name="options">(optional) options, if null, default will be constructed with default values, but no package loaders</param>
+            <param name="tempFileProvider">(optional) temp file provider. If null, then temp files are not used. Can be configured lated from property.</param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.AssignPackageLoaders(System.Collections.Generic.IEnumerable{Lexical.FileProvider.Package.IPackageLoader})">
+            <summary>
+            Assign new source of package loaders. Creates new pattern.
+            </summary>
+            <param name="packageLoaders"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.MakePattern(System.Collections.Generic.IEnumerable{Lexical.FileProvider.Package.IPackageLoader})">
+            <summary>
+            Make a pattern that separates package files from path.
+            
+            For example, if input is "myfolder/packet.zip/somelib.dll/somelib.embedded.resources",
+            then this pattern catches the following two matches "myfolder/packet.zip" and "somelib.dll".
+            
+            
+            </summary>
+            <param name="packageLoaders"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.GetPackageLoader(System.String)">
+            <summary>
+            Find which pattern loader can load a file by filename <paramref name="filename"/>.
+            </summary>
+            <param name="filename"></param>
+            <returns>package loader</returns>
+            <exception cref="T:System.InvalidOperationException">if suitable package loader could not be found</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.TryOpenPackage(Lexical.FileProvider.Package.PackageFileReference)">
+            <summary>
+            Open a package <paramref name="packageReference"/>.
+            
+            Returns a handle to file provider. File provider will not be evicted until the handle is disposed.
+            
+            Returns null, if package failed to open because the error was expected and was suppressed by <see cref="P:Lexical.FileProvider.Package.IPackageFileProviderOptions.ErrorHandler"/>.
+            </summary>
+            <param name="packageReference">package refrence, if null then refers to root file provider</param>
+            <returns>
+                    a handle, to a fileprovider. The handle must be disposed.
+                    null value, if package failed to open and the error was suppressed. That means that the file is not a package (wrong file format).
+            </returns>
+            <exception cref="T:System.ObjectDisposedException">if the opener was disposed</exception>
+            <exception cref="T:System.Exception">any non-suppressed error that occured when the package was opened. This error can be of a previously cached open attempt. </exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.HandlePackageLoadingError(Lexical.FileProvider.Package.PackageEntry,System.Exception,Lexical.FileProvider.Package.PackageEvent@,System.Collections.Generic.List{System.IDisposable})">
+            <summary>
+            Handle error that occurs while package is being loaded.
+            
+            This method forwards the process to Options.ErrorHandler,
+            and updates the state.
+            
+            This method is called by OpenPackage and with write-lock from PackageEntry.
+            </summary>
+            <param name="entry"></param>
+            <param name="e"></param>
+            <param name="packageEvent">place event here</param>
+            <param name="disposables"></param>
+            <returns>true to suppress</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.CanonizeSlashes(System.String)">
+            <summary>
+            Remove trailing and preceding '/' characters and '\' on windows. 
+            For example "\Folder\Subfolder\" is canonized to "Folder\Subfolder".
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.CanonizePackageReference(Lexical.FileProvider.Package.PackageFileReference)">
+            <summary>
+            Canonizes the root element of <paramref name="fileReference"/>.
+            
+            For example "C:\Temp\some.zip/mylib.dll/mylib.resources" is canonized so that
+            the new reference has elements "c:/Temp/some.zip" "mylib.dll" "mylib.resources".
+            </summary>
+            <param name="fileReference"></param>
+            <returns>canonized file reference</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.IsPhysicalProvider(Microsoft.Extensions.FileProviders.IFileProvider)">
+            <summary>
+            Estimate whether file provider represents physical files or not.
+            
+            This implementation is shady. Other file provider implementatios could also represent physical files, but this won't detect that.
+            The method is virtual so that the behaviour can be fixed by overloading.
+            </summary>
+            <param name="fileProvider"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.CanonizePath(System.String,Microsoft.Extensions.FileProviders.IFileProvider)">
+            <summary>
+            Canonize path so that it can be used as a cache key.
+            
+            Only physical file paths are canonized since physical file paths can be ambiguous (under windows).
+            For example "Folder\somefile.ext" is same file as "Folder/somefile.ext". 
+            
+            Separator character is '/' in the resulting canonized format. For example: "Folder/somefile.ext".
+            
+            Canonization doesn't extend to file entries in archives. If archive was compressed in linux, it can have file entries
+            that have backslashes in filenames. These entries shouldn't be canonized.
+            
+            </summary>
+            <param name="path"></param>
+            <param name="fileProvider"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.innerDispose(System.Collections.Generic.List{System.Exception}@)">
+            <summary>
+            Called by the Dispose(), which has already set the object into IsDisposing state.
+            New package entries cannot be created after put into IsDisposing state.
+            
+            This method will dispose the package entries and remove them from <see cref="F:Lexical.FileProvider.Package.PackageFileProvider.packages"/> dictionary.
+            </summary>
+            <param name="disposeErrors"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.Watch(System.String)">
+            <summary>
+            Add glob pattern watcher to the root <see cref="F:Lexical.FileProvider.Package.PackageFileProvider.FileProvider"/>. 
+            </summary>
+            <param name="filter"></param>
+            <returns>watcher</returns>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.observers">
+            <summary>
+            Copy on write snapshot of observers
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.m_observersLock">
+            <summary>
+            Lock under which <see cref="F:Lexical.FileProvider.Package.PackageFileProvider.observers"/> is modified.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProvider.observerTaskFactory">
+            <summary>
+            Object that handles <see cref="T:Lexical.FileProvider.Package.PackageEvent"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProvider.ObserverTaskFactory">
+            <summary>
+            Object that handles <see cref="T:Lexical.FileProvider.Package.PackageEvent"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProvider.lazyObserverTaskFactory">
+            <summary>
+            Returns task factory for observer events.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.FireEvent(Lexical.FileProvider.Package.PackageEvent)">
+            <summary>
+            Fire an event.
+            Another thread will run the events in observers.
+            If there are no observers at the time of queuing, the event is thrown away.
+            If object is disposed, the event is thrown away.
+            </summary>
+            <param name="packageEvent"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.UnsubscribeObserver(System.IObserver{Lexical.FileProvider.Package.PackageEvent})">
+            <summary>
+            Unsubscribe package event observer.
+            </summary>
+            <param name="observer"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.Evict(System.String)">
+            <summary>
+            Try to evict package and its cache record.
+            </summary>
+            <param name="filepath"></param>
+            <returns>true if filepath no longer exists in the cache, false if it still exists</returns>
+            <exception cref="T:System.Exception">Any error that occurs when disposing the entry</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with <paramref name="fileProvider"/>.
+            
+            If <paramref name="disposable"/> is not <see cref="T:System.IDisposable"/>, then it's not added.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.AddDisposable(System.Func{Lexical.FileProvider.Package.PackageFileProvider,System.Object})">
+            <summary>
+            Acquire disposable from delegate <paramref name="func"/>.
+            </summary>
+            <param name="func"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProvider.SetTempFileProvider(Lexical.FileProvider.Common.ITempFileProvider)">
+            <summary>
+            Set temp file provider.
+            </summary>
+            <param name="tempFileProvider"></param>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions_.ConfigureOptions(Lexical.FileProvider.Package.PackageFileProvider,System.Action{Lexical.FileProvider.Package.IPackageFileProviderOptions})">
+            <summary>
+            Configure options.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="configure"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions_CacheEvict.StartEvictTimer(Lexical.FileProvider.Package.PackageFileProvider,System.TimeSpan,System.TimeSpan)">
+            <summary>
+            Set cache eviction mechanism.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="expiration">How long a cache can be inactive before it will get evicted</param>
+            <param name="checkInterval">How often to check inactive packages</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions_CacheEvict.EvictAll(Lexical.FileProvider.Package.PackageFileProvider)">
+            <summary>
+            Evict all open package entries.
+            </summary>
+            <param name="fileProvider"></param>
+            <returns>true if all were evicted, false if atleast one still persists.</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.EvictTimer.#ctor(Lexical.FileProvider.Package.IObservablePackageFileProvider,System.TimeSpan,System.TimeSpan)">
+            <summary>
+            Create evict timer.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="expiration">time tolerated of inactivity</param>
+            <param name="checkInterval">check interval.</param>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageFileProviderOptions">
+            <summary>
+            Package loader options.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptions.AllowOpenFiles">
+            <summary>
+            Set policy whether open files is allowed or not.
+            
+            If open files is allowed, then <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> can keep open files
+            and keep them open for prolonged time. 
+            
+            If the policy is disallowed, then the <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> will open files
+            only to make snapshot copies of them.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptions.ReuseFailedResult">
+            <summary>
+            Set policy whether to cache and reuse failed open package attempt.
+            
+            If this policy is allowed, then <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> remembers what package files 
+            could not be opened. Error result can be evicted just like other cached info.
+            
+            If this policy is disallowed, then <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> will retry opening packages
+            if they are requested again, even if they had failed previously.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptions.PackageLoaders">
+            <summary>
+            A snapshot of package loaders. Writing takes a snapshot.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptions.ErrorHandler">
+            <summary>
+            Package loading error handler.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptions.MaxMemorySnapshotLength">
+            <summary>
+            Maximum byte[] blob to allocate.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptions.MaxTempSnapshotLength">
+            <summary>
+            Maximum temp file size to allocate.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileProviderOptions.isReadonly">
+            <summary>
+            Flag whether the object is in read-only state.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptions.IsReadonly">
+            <summary>
+            Get and set read-only state.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileProviderOptions.AssertWritable">
+            <summary>
+            Asserts that the object is in writable state.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptions.SetReadonly">
+            <summary>
+            Changes the state of the options to read-only.
+            </summary>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptions.#ctor">
+            <summary>
+            Create options with default values.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptions.#ctor(System.Collections.Generic.IEnumerable{Lexical.FileProvider.Package.IPackageLoader})">
+            <summary>
+            Create options with default values.
+            </summary>
+            <param name="packageLoaders"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptions.CopyFrom(Lexical.FileProvider.Package.IPackageFileProviderOptions)">
+            <summary>
+            Create a copy of <paramref name="ops"/>.
+            </summary>
+            <param name="ops"></param>
+            <returns>copy</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions_.AsReadonly(Lexical.FileProvider.Package.IPackageFileProviderOptions)">
+            <summary>
+            Create a clone that is read-only.
+            </summary>
+            <param name="options"></param>
+            <returns>options if was already readonly, or a readonly clone</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageFileReference">
+            <summary>
+            Presentation of canonical path that is split at package names.
+            
+            For example, for "/folder/myfile.zip/dir/mylib.dll/mylib.resources" would be split to 
+            segments of "/folder/myfile.zip", "dir/mylib.dll" and "mylib.resources".
+            
+            Directory separator is '/'. This is also separator between packages.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.Parse(System.String,System.Text.RegularExpressions.Regex,System.Boolean)">
+            <summary>
+            Parse package file names and possible non-package file with a regular-expression pattern.
+            </summary>
+            <param name="path"></param>
+            <param name="pattern">pattern that captures package files</param>
+            <param name="canonizeRoot">If true canonizes the first element "c:\Temp\myfile.zip" -> "c:/temp/myfile.zip"</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.Parse(System.String,System.Text.RegularExpressions.MatchCollection,System.Boolean)">
+            <summary>
+            Parse package file names and possible non-package file with a regular-expression pattern.
+            </summary>
+            <param name="path">path</param>
+            <param name="matches">captured matches</param>
+            <param name="canonizeRoot">If true canonizes the first element "c:\Temp\myfile.zip" -> "c:/temp/myfile.zip"</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.op_Implicit(Lexical.FileProvider.Package.PackageFileReference)~System.String">
+            <summary>
+            Convertible to string.
+            </summary>
+            <param name="packageRef"></param>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileReference.Parent">
+            <summary>
+            (Optional) Parent file
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileReference.Name">
+            <summary>
+            File name
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileReference.IsPackageFile">
+            <summary>
+            True if Name represents a package file.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileReference.canonicalPath">
+            <summary>
+            Cached canonical path
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileReference.CanonicalPath">
+            <summary>
+            Lazy evaluation of the canonical path.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileReference.array">
+            <summary>
+            Cached array from root.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileReference.Array">
+            <summary>
+            Lazy evaluation of array from root.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageFileReference.hashcode">
+            <summary>
+            Cached hash-code
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.#ctor(System.String,System.Boolean,Lexical.FileProvider.Package.PackageFileReference,System.String)">
+            <summary>
+            Create new package reference.
+            </summary>
+            <param name="name">file</param>
+            <param name="isPackageFile">true, if the file represents a package file</param>
+            <param name="parent">(optional) reference to parent file</param>
+            <param name="canonicalPath">(optional) canonical path. If null, it will be lazily reconstructed</param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.MakeCanonicalPath">
+            <summary>
+            Construct canonical path by concatenating nodes.
+            
+            For example, if nodes are "myfile.zip" and "mylib.dll", non-package node "mylib.resources"
+            then the  canonical path is "myfile.zip/mylib.dll/mylib.resources".
+            </summary>
+            <returns>canonical path</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.MakeArray">
+            <summary>
+            Make array from root to this
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileReference.Root">
+            <summary>
+            Get the root most node
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileReference.PackageReference">
+            <summary>
+            If this is package reference, return self. If it's not returns parent, be that null or not.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.PackageFileReference.Count">
+            <summary>
+            Count the degree if package refererences, including self. 
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.ToString">
+            <summary>
+            Print string
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.GetHashCode">
+            <summary>
+            Get hash code
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.Equals(System.Object)">
+            <summary>
+            Compare to another object for content equality
+            </summary>
+            <param name="obj"></param>
+            <returns>true if contain equal content</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileReference.Equals(Lexical.FileProvider.Package.PackageFileReference)">
+            <summary>
+            Compare to another object for content equality
+            </summary>
+            <param name="other"></param>
+            <returns>true if contain equal content</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.TempFileProvider">
+            <summary>
+            Class that creates temp files.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.TempFileProvider._default">
+            <summary>
+            Default instance that uses the default temp folder.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.TempFileProvider.Default">
+            <summary>
+            Default instance that uses the default temp folder.
+            
+            Note, that singleton cannot be disposed, as it is shared.
+            However, you can call .Clear() at shutdown of the application.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.TempFileProvider.HandleDisposedFunc">
+            <summary>
+            Signature of dispose function.
+            </summary>
+            <param name="handle"></param>
+            <param name="deleted"></param>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.TempFileProvider.handles">
+            <summary>
+            Collection of handles that are not disposed.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.TempFileProvider.ToDelete">
+            <summary>
+            Collection of files that should be deleted.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.TempFileProvider.createTempFile">
+            <summary>
+            Delegate that creates a new the temp file of size 0.
+            </summary>
+            <returns>full path to file name</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.TempFileProvider.#ctor(Lexical.FileProvider.Common.TempFileProviderOptions)">
+            <summary>
+            Create temp file provider.
+            </summary>
+            <param name="options">(optional) options</param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.TempFileProvider.CreateTempFile">
+            <summary>
+            Create new random temp file.
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.IO.IOException">if file creation failed</exception>
+            <exception cref="T:System.ObjectDisposedException">new files cannot be created after provider is disposed</exception>
+            <returns>handle with a filename for the caller to use. Caller must dispose after use, that will delete the file if it exists.</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.TempFileProvider.HandleDisposed(Lexical.FileProvider.Common.ITempFileHandle,System.Boolean)">
+            <summary>
+            Handle callback from handle.
+            </summary>
+            <param name="handle"></param>
+            <param name="deleted"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.TempFileProvider.Clear">
+            <summary>
+            Delete all handles, even non-disposed ones.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.TempFileProvider.DeleteMarked">
+            <summary>
+            Delete any disposed files that were locked when the handle was disposed.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.TempFileHandle.Filename">
+            <summary>
+            File path to temp file.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.TempFileHandle.disposed">
+            <summary>
+            is disposed
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.TempFileHandle.deleteAction">
+            <summary>
+            Callback to parent that manages handles.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.TempFileHandle.#ctor(System.String,Lexical.FileProvider.Package.TempFileProvider.HandleDisposedFunc)">
+            <summary>
+            Create new temp file handle.
+            </summary>
+            <param name="filename">full file path to temp file</param>
+        </member>
+        <member name="T:Lexical.FileProvider.Root.DriveEntry">
+            <summary>
+            Drive letter entry.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Root.DriveFileInfo">
+            <summary>
+            Represents a file on a physical filesystem
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.RootFileProvider">
+            <summary>
+            Physical file provider that uses the whole filesystem of the computer. 
+            
+            On windows, GetDirectoryContents("") returns the drive letters "c:", "d:", etc.
+            On linux, GetDirectoryContents("") returns the root path "/". 
+            
+            GetDirectoryContents(".") returns path that is relative to current working directory.
+            
+            Supports:
+               C:\xxx                   Windows drive letters.
+               /xx                      Unix root path
+               \\server\share\xxx       Windows network drives
+               ../xxx                   Relative paths.
+            
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.RootFileProvider.Pattern">
+            <summary>
+            Regex pattern that extracts features and classifies paths.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.RootFileProvider.physicalProviderConstructor">
+            <summary>
+            Constructor that initializes physical file providers.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.RootFileProvider.entries">
+            <summary>
+            Cached file providers.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.RootFileProvider.entryConstructor">
+            <summary>
+            Function for concurrent dictionary to create DriveEntry.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.RootFileProvider.#ctor(System.Func{System.String,Microsoft.Extensions.FileProviders.IFileProvider})">
+            <summary>
+            Create new root file-system fileprovider.
+            </summary>
+            <param name="physicalProviderConstructor">(optional) constructor that creates physical <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/>s</param>
+        </member>
+        <member name="M:Lexical.FileProvider.RootFileProvider.GetFileProviderAndPath(System.String,Microsoft.Extensions.FileProviders.IFileProvider@,System.String@)">
+            <summary>
+            Classifies <paramref name="path"/>, get-or-creates a matching <paramref name="fileProvider"/> to be returned and <paramref name="subpath"/> within that file provider.
+            </summary>
+            <param name="path"></param>
+            <param name="fileProvider"></param>
+            <param name="subpath"></param>
+            <returns>true if <paramref name="path"/> was successfully parsed</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.RootFileProvider.GetDirectoryContents(System.String)">
+            <summary>
+            Get directory contents.
+            
+            null and "" Refers to OS file-system root.
+            "." To current working directory.
+            </summary>
+            <param name="subpath">Path to directory. Directory separator is "/".</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.RootFileProvider.GetFileInfo(System.String)">
+            <summary>
+            Get file info.
+            </summary>
+            <param name="subpath">path to file. Directory separator is "/".</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.RootFileProvider.Watch(System.String)">
+            <summary>
+            Get watcher.
+            
+            If pattern is not rooted, it will watch from current directory.
+            </summary>
+            <param name="glob"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.RootFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider.
+            
+            If <paramref name="disposable"/> is not <see cref="T:System.IDisposable"/>, then it's not added.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileProviderExtensions.ListAll(Microsoft.Extensions.FileProviders.IFileProvider,System.String)">
+            <summary>
+            List recursively all directories and files. (Root is excluded)
+            </summary>
+            <param name="fileProvider"></param>
+            <returns>all files and directores, except root</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileProviderExtensions.ListAllPaths(Microsoft.Extensions.FileProviders.IFileProvider,System.String)">
+            <summary>
+            List recursively all directories and files. (Root is excluded)
+            </summary>
+            <param name="fileProvider"></param>
+            <returns>all paths</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileProviderExtensions.ListAllFileInfoAndPath(Microsoft.Extensions.FileProviders.IFileProvider,System.String)">
+            <summary>
+            List recursively all directories and files with path. (Root is excluded)
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="startPath">start path</param>
+            <returns>Tuples with fileinfo and path</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Utils.FileScanner">
+            <summary>
+            This class scans directories and searches for files that match a wildcard and regex patterns.
+            
+            The class itself is IEnumerable, it will start a new scan IEnumerator is acquired.
+            
+            It uses concurrent threads for scanning. Tasks are spawned with Task.StartNew. 
+            If TaskFactory is congested, the scanning may not start immediately. 
+            Caller may provide customized TaskFactory to avoid issues.
+            
+            The FileScanner is programmed so that it's internal separator is '/', and results use '/' as separator.
+            For instance, to scan a network drive with RootFileProvider, use '/' separator after volume 
+            <code>new FileScanner(root).AddWildcard(@"\\192.168.8.1\shared/*")</code>.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.FileScanner.patterns">
+            <summary>
+            Patterns by start path. 
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.FileScanner.TaskFactory">
+            <summary>
+            The factory that will be used for creating scanning threads.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.FileScanner.errors">
+            <summary>
+            A place to put errors. Caller must place value here before starting a scan.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.FileScanner.FileProvider">
+            <summary>
+            Root file provider
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Utils.FileScanner.RootPrefix">
+            <summary>
+            Prefix to add to each file entries before they are matched.
+            
+            For instance if "/" is used as prefix, then glob pattern "**/*.dll" can be used
+            to match against all .dll files _including_ root, which would be "/" with prefix.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.FileScanner.DirectoryEvaluator">
+            <summary>
+            Function that tests whether to enter a directory. 
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.FileScanner.DefaultDirectoryEvaluator">
+            <summary>
+            Default evaluator.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Utils.FileScanner.ReturnDirectories">
+            <summary>
+            Should file scanner return directories.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Utils.FileScanner.ReturnFiles">
+            <summary>
+            Should file scanner return files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileScanner.#ctor(Microsoft.Extensions.FileProviders.IFileProvider)">
+            <summary>
+            Create new file scanner.
+            </summary>
+            <param name="fileProvider"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileScanner.AddWildcard(System.String)">
+            <summary>
+            Add a filename pattern, a pattern with path and wildcard, for example "*.dll", "folder/*.dll"
+            </summary>
+            <param name="pattern"></param>
+            <returns>self</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileScanner.AddGlobPattern(System.String)">
+            <summary>
+            Adds glob pattern. 
+              "**" Matched to for any string of characters including directory separator.
+              "*" Matched for any string of characters within the same directory.
+              "?" Matched for one character excluding directory separator.
+            </summary>
+            <param name="pattern"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileScanner.SetPathPrefix(System.String)">
+            <summary>
+            Prefix to add to each file entries before they are matched.
+            
+            For instance if "/" is used as prefix, then glob pattern "**/*.dll" can be used
+            to match against all .dll files _including_ root, which would be "/" with prefix.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileScanner.SetErrorTarget(System.Collections.Concurrent.IProducerConsumerCollection{System.Exception})">
+            <summary>
+            Set collection where errors are written to.
+            </summary>
+            <param name="errors"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileScanner.SetReturnDirectories(System.Boolean)">
+            <summary>
+            Should file scanner return directories.
+            <paramref name="returnDirectories"/>
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileScanner.SetReturnFiles(System.Boolean)">
+            <summary>
+            Should file scanner return directories.
+            <paramref name="returnFiles"/>
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileScanner.System#Collections#Generic#IEnumerable{System#String}#GetEnumerator">
+            <summary>
+            Start multi-threaded scan operation.
+            </summary>
+            <returns>FileScannerEnumerator</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.FileScanner.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Start multi-threaded scan operation.
+            </summary>
+            <returns>FileScannerEnumerator</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Utils.PatternScanner">
+            <summary>
+            Resettable scan enumerator.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Utils.ScanJob">
+            <summary>
+            A single scan job. 
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.ScanJob.Scan">
+            <summary>
+            Call this from every thread that participates in scanning job.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Utils.GlobPattern">
+            <summary>
+            Glob pattern uses the following notation:
+              "*" matches to string of characters within the same directory.
+              "?" matches to any character except directory separator.
+              "**" matches to any characters, including directory separators.
+              
+            For example: "**.zip/**.dll" 
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Utils.GlobPatternFactory">
+            <summary>
+            Glob pattern factory that converts glob pattern string into regular expression.
+            
+            Glob pattern uses the following notation:
+              "*" matches to string of characters within the same directory.
+              "?" matches to any character except directory separator.
+              "**" matches to any characters, including directory separators.
+              
+            For example: "**/*.zip/**.dll" 
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Utils.GlobPatternFactory.Slash">
+            <summary>
+            Singleton instance that assumes "/" is the directory separator.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Utils.GlobPatternFactory.Backslash">
+            <summary>
+            Singleton instance that assumes "\" is the directory separator.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Utils.GlobPatternFactory.SlashAndBackslash">
+            <summary>
+            Singleton instance that assumes that both "/" and "\" are used as directory separators.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.GlobPatternFactory.Create(System.String)">
+            <summary>
+            Get or create GlobPatternFactory
+            </summary>
+            <param name="directorySeparatorCharacters">separator characters, e.g. "/\\"</param>
+            <returns>glob pattern factory</returns>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.GlobPatternFactory.GlobPattern">
+            <summary>
+            Pattern that searches for "**", "*" and "?" characters
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.GlobPatternFactory.DirectorySeparatorChars">
+            <summary>
+            Parameters on how this directory is configured.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.GlobPatternFactory.twoStarPattern">
+            <summary>
+            Replace strings for each group.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.GlobPatternFactory.oneStarPattern">
+            <summary>
+            Replace strings for each group.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.GlobPatternFactory.questionMarkPattern">
+            <summary>
+            Replace strings for each group.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.GlobPatternFactory.matchEvaluator">
+            <summary>
+            Delegate used in Replace.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.GlobPatternFactory.nonglobtextReplacer">
+            <summary>
+            Replacer for text parts that are not **, *, or ?.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.GlobPatternFactory.#ctor(System.String,System.Text.RegularExpressions.MatchEvaluator)">
+            <summary>
+            Create new glob pattern.
+            </summary>
+            <param name="directorySeparatorChars">directory separtor characters, for example "/\\"</param>
+            <param name="nonglobtextReplacer"></param>
+        </member>
+        <member name="T:Lexical.FileProvider.Utils.PatternSet">
+            <summary>
+            A builder where multiple patterns are added and then united into one unifying pattern.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.PatternSet.patterns">
+            <summary>
+            Regex patterns in string format. These will all be compiled into one pattern.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.PatternSet.regex_patterns">
+            <summary>
+            Regex based patterns.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Utils.PatternSet.matcherFunc">
+            <summary>
+            A cache for matcher function.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Utils.PatternSet.MatcherFunc">
+            <summary>
+            A function that matches all the added patterns.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.PatternSet.BuildMatcherFunc">
+            <summary>
+            Build a function that matches all the wildcards and regular expressions.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.PatternSet.AddWildcard(System.String)">
+            <summary>
+            Add wildcard pattern, for example "*.dll"
+            </summary>
+            <param name="wildcard"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.PatternSet.AddGlobPattern(System.String,System.String)">
+            <summary>
+            Add glob pattern, for example "**.zip/**.dll"
+            </summary>
+            <param name="globPattern"></param>
+            <param name="directorySeparatorChars"></param>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.PatternSet.AddWildcards(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Add multiple wildcard patterns, for example "*.dll" "*.exe".
+            
+            "*" denotes for anything, even paths.
+            </summary>
+            <param name="wildcards"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.PatternSet.AddRegexes(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Add multiple regex patterns.
+            </summary>
+            <param name="regex_patterns"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.PatternSet.AddGlobPatterns(System.Collections.Generic.IEnumerable{System.String},System.String)">
+            <summary>
+            Add glob pattern, for example "**.zip/**.dll"
+            </summary>
+            <param name="globPatterns"></param>
+            <param name="directorySeparatorChars"></param>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.PatternSet.AddRegex(System.String)">
+            <summary>
+            Add regex pattern.
+            </summary>
+            <param name="regex_pattern"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.PatternSet.AddRegexes(System.Collections.Generic.IEnumerable{System.Text.RegularExpressions.Regex})">
+            <summary>
+            Add regex objects.
+            </summary>
+            <param name="regex_patterns"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Utils.PatternSet.AddRegex(System.Text.RegularExpressions.Regex)">
+            <summary>
+            Add regex object.
+            </summary>
+            <param name="regex_pattern"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.ZipFileProvider.#ctor(System.IO.Compression.ZipArchive,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create zip content file provider.
+            </summary>
+            <param name="zipArchive"></param>
+            <param name="path">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+        </member>
+        <member name="M:Lexical.FileProvider.ZipFileProvider.#ctor(System.IO.Stream,System.Text.Encoding,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create file provider that reads zip content from a readable and seekable stream. 
+            
+            Note, that one file entry stream is allowed to be open at the same time. Others will wait in lock.
+            
+            Does not dispose the <paramref name="stream"/> with the file provider.
+            To dispose stream along with its file provider, construct it like this: <code>new ZipFileProvider(stream).AddDisposable(stream)</code>
+            </summary>
+            <param name="stream"></param>
+            <param name="encoding">(optional) encoding of zip file entries</param>
+            <param name="path">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <returns></returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on file format error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.ZipFileProvider.#ctor(System.Func{System.IO.Compression.ZipArchive},System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create file provider that can reopen zip archive for each concurrent thread.
+            </summary>
+            <param name="zipArchiveOpener"></param>
+            <param name="path">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on file format error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.ZipFileProvider.#ctor(System.String,System.Text.Encoding,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Open .zip file for reading. Opening from a file allows concurrent reading of zip entries.
+            </summary>
+            <param name="filename">file name</param>
+            <param name="path">(optional) path of the file being opened within its root file provider</param>
+            <param name="encoding">(optional) encoding of zip file entries</param>
+            <param name="lastModified">(optional)</param>
+            <returns></returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on file format error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.ZipFileProvider.AddArchiveEntries(Lexical.FileProvider.Common.ArchiveDirectoryEntry,System.Collections.Generic.IEnumerable{System.IO.Compression.ZipArchiveEntry},Lexical.FileProvider.Common.IStreamProvider)">
+            <summary>
+            Add <see cref="T:System.IO.Compression.ZipArchiveEntry"/> into tree structure.
+            </summary>
+            <param name="root"></param>
+            <param name="zipArchiveEntries"></param>
+            <param name="streamProvider">stream provider for files</param>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.ZipFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the obejct.
+            
+            If <paramref name="disposable"/> is not <see cref="T:System.IDisposable"/>, then it's not added.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.ZipFileProvider.AddBelatedDispose(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.ZipArchiveStreamProvider">
+            <summary>
+            <see cref="T:Lexical.FileProvider.Common.IStreamProvider"/> that reads from a <see cref="T:System.IO.Compression.ZipArchive"/>. 
+            Is shared with help from a lock, because there is only one stream pointer.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.ZipOpenerStreamProvider">
+            <summary>
+            <see cref="T:Lexical.FileProvider.Common.IStreamProvider"/> that re-opens <see cref="T:System.IO.Compression.ZipArchive"/>s.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader.Zip">
+            <summary>
+            Uses <see cref="T:Lexical.FileProvider.ZipFileProvider"/> to open zip files.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Zip.Singleton">
+            <summary>
+            Static singleton instance that handles .zip extensions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Zip.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Zip.#ctor">
+            <summary>
+            Create new package loader that loads zip files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Zip.#ctor(System.String)">
+            <summary>
+            Create new package loader that loads zip files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Zip.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Opens a .zip file with zero to multiple open file handles.
+            Is thread-safe and thread-scalable (concurrent use is possible).
+            </summary>
+            <param name="filename"></param>
+            <returns></returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on file format error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Zip.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Reads zip file from a stream. Takes ownership of the stream (closes it). 
+            Is thread-safe, but not thread-scalable (locks threads).
+            </summary>
+            <param name="stream"></param>
+            <param name="filename">(optional) clue of the file that is being opened</param>
+            <returns></returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on file format error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Zip.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Read zip file from a byte[]. The caller must close the returned file provider.
+            </summary>
+            <param name="data"></param>
+            <param name="packageInfo"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -17,10 +17,10 @@ namespace Lexical.FileProvider
     /// <summary>
     /// Physical file provider that uses the whole filesystem of the computer. 
     /// 
-    /// On windows, GetDirectoryContents(null) returns the drive letters "c:", "d:", etc.
-    /// On linux, GetDirectoryContents(null) returns the root path "/". 
+    /// On windows, GetDirectoryContents("") returns the drive letters "c:", "d:", etc.
+    /// On linux, GetDirectoryContents("") returns the root path "/". 
     /// 
-    /// Unrooted queries, such as, GetDirectoryContents("") returns path that is relative to current working directory.
+    /// GetDirectoryContents(".") returns path that is relative to current working directory.
     /// 
     /// Supports:
     ///    C:\xxx                   Windows drive letters.
@@ -31,6 +31,9 @@ namespace Lexical.FileProvider
     /// </summary>
     public class RootFileProvider : DisposeList, IFileProvider, IDisposable
     {
+        /// <summary>
+        /// Regex pattern that extracts features and classifies paths.
+        /// </summary>
         internal protected static Regex Pattern = new Regex("(^(?<windows_driveletter>[a-zA-Z]\\:)((\\\\|\\/)(?<windows_path>.*))?$)|(^\\\\\\\\(?<share_server>[^\\\\]+)\\\\(?<share_name>[^\\\\]+)((\\\\|\\/)(?<share_path>.*))?$)|((?<unix_rooted_path>\\/.*)$)|(?<relativepath>^.*$)", RegexOptions.Compiled|RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture);
 
         /// <summary>
@@ -48,6 +51,10 @@ namespace Lexical.FileProvider
         /// </summary>
         Func<string, DriveEntry> entryConstructor;
 
+        /// <summary>
+        /// Create new root file-system fileprovider.
+        /// </summary>
+        /// <param name="physicalProviderConstructor">(optional) constructor that creates physical <see cref="IFileProvider"/>s</param>
         public RootFileProvider(Func<string, IFileProvider> physicalProviderConstructor = default)
         {
             this.physicalProviderConstructor = physicalProviderConstructor ?? (path => new PhysicalFileProvider(path));
@@ -62,6 +69,13 @@ namespace Lexical.FileProvider
             return driveEntry;
         }
 
+        /// <summary>
+        /// Classifies <paramref name="path"/>, get-or-creates a matching <paramref name="fileProvider"/> to be returned and <paramref name="subpath"/> within that file provider.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="subpath"></param>
+        /// <returns>true if <paramref name="path"/> was successfully parsed</returns>
         bool GetFileProviderAndPath(string path, out IFileProvider fileProvider, out string subpath)
         {
             // Assert not disposding
@@ -73,7 +87,7 @@ namespace Lexical.FileProvider
 
             // Fix relative path to rooted path
             if (relativepath.Success) {
-                if (path == "") 
+                if (path == ".") 
                     path = Directory.GetCurrentDirectory(); 
                 else 
                     path = Path.GetFullPath(path); 
@@ -125,10 +139,18 @@ namespace Lexical.FileProvider
             fileProvider = null; subpath = null; return false;
         }
 
+        /// <summary>
+        /// Get directory contents.
+        /// 
+        /// null and "" Refers to OS file-system root.
+        /// "." To current working directory.
+        /// </summary>
+        /// <param name="subpath">Path to directory. Directory separator is "/".</param>
+        /// <returns></returns>
         public IDirectoryContents GetDirectoryContents(string subpath)
         {
             // Return all drives
-            if (subpath == null) return new RootDirectoryContents();
+            if (subpath == null || subpath == "") return new RootDirectoryContents();
 
             // Get fileprovider and new subpath
             IFileProvider fileProvider;
@@ -138,10 +160,15 @@ namespace Lexical.FileProvider
             return NotFoundDirectoryContents.Singleton;
         }
 
+        /// <summary>
+        /// Get file info.
+        /// </summary>
+        /// <param name="subpath">path to file. Directory separator is "/".</param>
+        /// <returns></returns>
         public IFileInfo GetFileInfo(string subpath)
         {
             // Return all drives
-            if (subpath == null) return new RootDirectoryContents();
+            if (subpath == null || subpath == "") return new RootDirectoryContents();
 
             // Get fileprovider and new subpath
             IFileProvider fileProvider;

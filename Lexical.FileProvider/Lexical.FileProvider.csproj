@@ -19,6 +19,10 @@ For example: "somefile.zip/my.dll/my.embedded.resources"</Description>
     <PackageTags>IFileProvider fileprovider package archive lexical</PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>N:\Lexical\FileProvider.GitHub\Lexical.FileProvider\Lexical.FileProvider.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\LICENSE" Link="LICENSE">
       <PackagePath></PackagePath>

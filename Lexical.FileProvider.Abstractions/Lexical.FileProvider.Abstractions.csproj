@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>0.13.3</Version>
+    <Version>0.13.4</Version>
     <Authors>Toni Kalajainen</Authors>
     <Description>Abstractions for IFileprovider that can open package files. For example "myfile.zip/mylib.dll/mylib.resources"
 </Description>

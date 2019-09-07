@@ -13,14 +13,16 @@ namespace Lexical.FileProvider.Package
 {
     // <IPackageLoader>
     /// <summary>
-    /// Interace for loaders that read in <see cref="IFileProvider"/>s.
+    /// Interace for loaders that read package files, such as .zip, as <see cref="IFileProvider"/>s.
     /// 
-    /// Must implement one or more of the following sub-interfaces:
-    ///    <see cref="IPackageLoaderOpenFileCapability"/>
-    ///    <see cref="IPackageLoaderLoadFileCapability"/>
-    ///    <see cref="IPackageLoaderUseStreamCapability"/>
-    ///    <see cref="IPackageLoaderLoadFromStreamCapability"/>
-    ///    <see cref="IPackageLoaderUseBytesCapability"/>
+    /// The implementing class must implement one or more of the following sub-interfaces:
+    /// <list type="bullet">
+    ///    <item><see cref="IPackageLoaderOpenFileCapability"/></item>
+    ///    <item><see cref="IPackageLoaderLoadFileCapability"/></item>
+    ///    <item><see cref="IPackageLoaderUseStreamCapability"/></item>
+    ///    <item><see cref="IPackageLoaderLoadFromStreamCapability"/></item>
+    ///    <item><see cref="IPackageLoaderUseBytesCapability"/></item>
+    /// </list>
     /// </summary>
     public interface IPackageLoader
     {
@@ -41,10 +43,14 @@ namespace Lexical.FileProvider.Package
     // </IPackageLoader>
 
     // <IPackageLoaderOpenFileCapability>
+    /// <summary>
+    /// Package loader that has the capability to open a package file as <see cref="IFileProvider"/>.
+    /// </summary>
     public interface IPackageLoaderOpenFileCapability : IPackageLoader
     {
         /// <summary>
-        /// Create a <see cref="IFileProvider"/> that opens a file and is allowed to keep it open until the file provider is disposed. 
+        /// Open a package file and keep it open until the file provider is disposed. 
+        /// Return <see cref="IFileProvider"/> that represents the contents of the open file.
         /// 
         /// The caller is responsible for disposing the returned file provider if it implements <see cref="IDisposable"/>.
         /// </summary>
@@ -60,11 +66,14 @@ namespace Lexical.FileProvider.Package
     // </IPackageLoaderOpenFileCapability>
 
     // <IPackageLoaderLoadFileCapability>
+    /// <summary>
+    /// Package loader that has the capability to load a package file completely.
+    /// </summary>
     public interface IPackageLoaderLoadFileCapability : IPackageLoader
     {
         /// <summary>
-        /// Loads <see cref="IFileProvider"/> completely from a file. 
-        /// File must be closed when the call returns.
+        /// Load a package file completely. The implementation must close the file before the call returns.
+        /// Return <see cref="IFileProvider"/> that represents the contents of the open file.
         /// 
         /// The caller is responsible for disposing the returned file provider if it implements <see cref="IDisposable"/>.
         /// </summary>
@@ -80,17 +89,22 @@ namespace Lexical.FileProvider.Package
     // </IPackageLoaderLoadFileCapability>
 
     // <IPackageLoaderUseStreamCapability>
+    /// <summary>
+    /// Package loader that has the capability use an open <see cref="Stream"/> to access contents of a package file.
+    /// </summary>
     public interface IPackageLoaderUseStreamCapability : IPackageLoader
     {
         /// <summary>
-        /// Create a <see cref="IFileProvider"/> that reads its contents from an open <paramref name="stream"/>.
-        /// File provider takes ownership of the stream, and closes the stream along with the provider.
+        /// Use an open <paramref name="stream"/> to read contents from a package file.
+        /// Return a <see cref="IFileProvider"/> that represent the contents.
         /// 
-        /// The stream must be readable and seekable, <see cref="Stream.CanSeek"/> must be true.
+        /// The returned file provider takes ownership of the stream, and must close the <paramref name="stream"/> along with the provider.
+        /// 
+        /// <paramref name="stream"/> must be readable and seekable, <see cref="Stream.CanSeek"/> must be true.
         /// 
         /// The caller is responsible for disposing the returned file provider if it implements <see cref="IDisposable"/>.
         /// 
-        /// Note, open stream cannot be read concurrently. 
+        /// Note, open stream cannot be read concurrently from two threads and must be locked with mutually exclusive lock if two reads attempted.
         /// </summary>
         /// <param name="stream">stream to read data from. Stream must be disposed along with the returned file provider.</param>
         /// <param name="packageInfo">(optional) Information about packge that is being opened</param>
@@ -104,11 +118,14 @@ namespace Lexical.FileProvider.Package
     // </IPackageLoaderUseStreamCapability>
 
     // <IPackageLoaderLoadFromStreamCapability>
+    /// <summary>
+    /// Package loader that has the capability load a package completely from an open <see cref="Stream"/>.
+    /// </summary>
     public interface IPackageLoaderLoadFromStreamCapability : IPackageLoader
     {
         /// <summary>
-        /// Create a <see cref="IFileProvider"/> that is completely read from a <paramref name="stream"/>.
-        /// The callee does not take ownership of the stream. 
+        /// Read package completely from <paramref name="stream"/> and return representation of contents as <see cref="IFileProvider"/>.
+        /// The implementation and the returned <see cref="IFileProvider"/> does not take ownership of the stream. 
         /// 
         /// The returned file provider can be left to be garbage collected and doesn't need to be disposed.
         /// </summary>
@@ -124,6 +141,9 @@ namespace Lexical.FileProvider.Package
     // </IPackageLoaderLoadFromStreamCapability>
 
     // <IPackageLoaderUseBytesCapability>
+    /// <summary>
+    /// Package loader that has the capability load a package completely from an bytes.
+    /// </summary>
     public interface IPackageLoaderUseBytesCapability : IPackageLoader
     {
         /// <summary>

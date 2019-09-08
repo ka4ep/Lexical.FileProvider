@@ -14,7 +14,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// <summary>
     /// Uses <see cref="TarFileProvider"/> to open .tar files.
     /// </summary>
-    public class Tar : IPackageLoaderOpenFileCapability, IPackageLoaderUseStreamCapability, IPackageLoaderUseBytesCapability
+    public class Tar : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
         private static Tar singleton = new Tar();
 

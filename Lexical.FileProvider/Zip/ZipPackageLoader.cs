@@ -14,7 +14,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// <summary>
     /// Uses <see cref="ZipFileProvider"/> to open zip files.
     /// </summary>
-    public class Zip : IPackageLoaderOpenFileCapability, IPackageLoaderUseStreamCapability, IPackageLoaderUseBytesCapability
+    public class Zip : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
         private static Zip singleton = new Zip();
 

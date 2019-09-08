@@ -14,7 +14,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// <summary>
     /// Uses <see cref="RarFileProvider"/> to open .rar files.
     /// </summary>
-    public class Rar : IPackageLoaderOpenFileCapability, IPackageLoaderUseStreamCapability, IPackageLoaderUseBytesCapability
+    public class Rar : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
         private static Rar singleton = new Rar(@"\.rar", true);
 

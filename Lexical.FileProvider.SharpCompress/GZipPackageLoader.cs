@@ -14,7 +14,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// <summary>
     /// Uses <see cref="GZipFileProvider"/> to open .gz files.
     /// </summary>
-    public class GZip : IPackageLoaderOpenFileCapability, IPackageLoaderUseStreamCapability, IPackageLoaderUseBytesCapability
+    public class GZip : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
         private static GZip singleton = new GZip();
 

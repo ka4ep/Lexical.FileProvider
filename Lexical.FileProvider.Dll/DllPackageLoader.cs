@@ -15,7 +15,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// 
     /// To use this class, the caller must import NuGet library Lexical.FileProvider.Package.Abstractions.
     /// </summary>
-    public class Dll : IPackageLoaderUseStreamCapability, IPackageLoaderOpenFileCapability
+    public class Dll : IPackageLoaderUseStream, IPackageLoaderOpenFile
     {
         private static Dll singleton = new Dll();
 
@@ -85,7 +85,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// 
     /// To use this class, the caller must import NuGet library Lexical.FileProvider.Package.Abstractions.
     /// </summary>
-    public class Exe : IPackageLoaderUseStreamCapability, IPackageLoaderOpenFileCapability
+    public class Exe : IPackageLoaderUseStream, IPackageLoaderOpenFile
     {
         private static Exe singleton = new Exe();
 

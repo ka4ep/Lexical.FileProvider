@@ -17,11 +17,11 @@ namespace Lexical.FileProvider.Package
     /// 
     /// The implementing class must implement one or more of the following sub-interfaces:
     /// <list type="bullet">
-    ///    <item><see cref="IPackageLoaderOpenFileCapability"/></item>
-    ///    <item><see cref="IPackageLoaderLoadFileCapability"/></item>
-    ///    <item><see cref="IPackageLoaderUseStreamCapability"/></item>
-    ///    <item><see cref="IPackageLoaderLoadFromStreamCapability"/></item>
-    ///    <item><see cref="IPackageLoaderUseBytesCapability"/></item>
+    ///    <item><see cref="IPackageLoaderOpenFile"/></item>
+    ///    <item><see cref="IPackageLoaderLoadFile"/></item>
+    ///    <item><see cref="IPackageLoaderUseStream"/></item>
+    ///    <item><see cref="IPackageLoaderLoadFromStream"/></item>
+    ///    <item><see cref="IPackageLoaderUseBytes"/></item>
     /// </list>
     /// </summary>
     public interface IPackageLoader
@@ -42,11 +42,11 @@ namespace Lexical.FileProvider.Package
     }
     // </IPackageLoader>
 
-    // <IPackageLoaderOpenFileCapability>
+    // <IPackageLoaderOpenFile>
     /// <summary>
-    /// Package loader that has the capability to open a package file as <see cref="IFileProvider"/>.
+    /// Package loader that can open a package file as <see cref="IFileProvider"/>.
     /// </summary>
-    public interface IPackageLoaderOpenFileCapability : IPackageLoader
+    public interface IPackageLoaderOpenFile : IPackageLoader
     {
         /// <summary>
         /// Open a package file and keep it open until the file provider is disposed. 
@@ -63,13 +63,13 @@ namespace Lexical.FileProvider.Package
         /// <exception cref="PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
         IFileProvider OpenFile(string filepath, IPackageLoadInfo packageInfo = null);
     }
-    // </IPackageLoaderOpenFileCapability>
+    // </IPackageLoaderOpenFile>
 
-    // <IPackageLoaderLoadFileCapability>
+    // <IPackageLoaderLoadFile>
     /// <summary>
-    /// Package loader that has the capability to load a package file completely.
+    /// Package loader that cab load a package file completely.
     /// </summary>
-    public interface IPackageLoaderLoadFileCapability : IPackageLoader
+    public interface IPackageLoaderLoadFile : IPackageLoader
     {
         /// <summary>
         /// Load a package file completely. The implementation must close the file before the call returns.
@@ -86,13 +86,13 @@ namespace Lexical.FileProvider.Package
         /// <exception cref="PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
         IFileProvider LoadFile(string filepath, IPackageLoadInfo packageInfo = null);
     }
-    // </IPackageLoaderLoadFileCapability>
+    // </IPackageLoaderLoadFile>
 
-    // <IPackageLoaderUseStreamCapability>
+    // <IPackageLoaderUseStream>
     /// <summary>
-    /// Package loader that has the capability use an open <see cref="Stream"/> to access contents of a package file.
+    /// Package loader that can open <see cref="Stream"/> to access contents of a package file.
     /// </summary>
-    public interface IPackageLoaderUseStreamCapability : IPackageLoader
+    public interface IPackageLoaderUseStream : IPackageLoader
     {
         /// <summary>
         /// Use an open <paramref name="stream"/> to read contents from a package file.
@@ -115,13 +115,13 @@ namespace Lexical.FileProvider.Package
         /// <exception cref="PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
         IFileProvider UseStream(Stream stream, IPackageLoadInfo packageInfo = null);
     }
-    // </IPackageLoaderUseStreamCapability>
+    // </IPackageLoaderUseStream>
 
-    // <IPackageLoaderLoadFromStreamCapability>
+    // <IPackageLoaderLoadFromStream>
     /// <summary>
-    /// Package loader that has the capability load a package completely from an open <see cref="Stream"/>.
+    /// Package loader that can load a package completely from an open <see cref="Stream"/>.
     /// </summary>
-    public interface IPackageLoaderLoadFromStreamCapability : IPackageLoader
+    public interface IPackageLoaderLoadFromStream : IPackageLoader
     {
         /// <summary>
         /// Read package completely from <paramref name="stream"/> and return representation of contents as <see cref="IFileProvider"/>.
@@ -138,13 +138,13 @@ namespace Lexical.FileProvider.Package
         /// <exception cref="PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
         IFileProvider LoadFromStream(Stream stream, IPackageLoadInfo packageInfo = null);
     }
-    // </IPackageLoaderLoadFromStreamCapability>
+    // </IPackageLoaderLoadFromStream>
 
-    // <IPackageLoaderUseBytesCapability>
+    // <IPackageLoaderUseBytes>
     /// <summary>
-    /// Package loader that has the capability load a package completely from an bytes.
+    /// Package loader that can load a package completely from an bytes.
     /// </summary>
-    public interface IPackageLoaderUseBytesCapability : IPackageLoader
+    public interface IPackageLoaderUseBytes : IPackageLoader
     {
         /// <summary>
         /// Load file provider from bytes.
@@ -160,7 +160,7 @@ namespace Lexical.FileProvider.Package
         /// <exception cref="PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
         IFileProvider UseBytes(byte[] data, IPackageLoadInfo packageInfo = null);
     }
-    // </IPackageLoaderUseBytesCapability>
+    // </IPackageLoaderUseBytes>
 
     // <IPackageLoadInfo>
     /// <summary>

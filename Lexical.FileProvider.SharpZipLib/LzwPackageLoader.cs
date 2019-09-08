@@ -15,7 +15,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// 
     /// See <see href="https://github.com/icsharpcode/SharpZipLib"/>.
     /// </summary>
-    public class Lzw : IPackageLoaderOpenFileCapability, IPackageLoaderUseBytesCapability
+    public class Lzw : IPackageLoaderOpenFile, IPackageLoaderUseBytes
     {
         private static Lzw singleton = new Lzw();
 

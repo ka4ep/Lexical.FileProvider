@@ -375,12 +375,12 @@ namespace Lexical.FileProvider.Package
                     // Read open physical file
                     if (fileProvider == null && allowOpenFile && physicalFile != null && File.Exists(physicalFile))
                     {
-                        if (packageLoader is IPackageLoaderOpenFileCapability fileOpener)
+                        if (packageLoader is IPackageLoaderOpenFile fileOpener)
                         {
                             fileProvider = fileOpener.OpenFile(physicalFile, packageInfo);
                             lengthEstimate = (long)(packageInfo.Length * openFileCoefficient);
                         }
-                        else if (packageLoader is IPackageLoaderUseStreamCapability streamUse_)
+                        else if (packageLoader is IPackageLoaderUseStream streamUse_)
                         {
                             fileProvider = streamUse_.UseStream(new FileStream(physicalFile, FileMode.Open), packageInfo);
                             lengthEstimate = (long)(packageInfo.Length * openFileCoefficient);
@@ -390,7 +390,7 @@ namespace Lexical.FileProvider.Package
                     // Try to read to memory snapshot
                     if (fileProvider == null && packageInfo.Length <= _options.MaxMemorySnapshotLength)
                     {
-                        if (packageLoader is IPackageLoaderLoadFromStreamCapability streamLoader)
+                        if (packageLoader is IPackageLoaderLoadFromStream streamLoader)
                         {
                             using (Stream s = fileInfo.CreateReadStream())
                             {
@@ -398,13 +398,13 @@ namespace Lexical.FileProvider.Package
                                 lengthEstimate = packageInfo.Length;
                             }
                         }
-                        else if (packageInfo.Length < Int32.MaxValue && packageLoader is IPackageLoaderUseBytesCapability bytesLoader)
+                        else if (packageInfo.Length < Int32.MaxValue && packageLoader is IPackageLoaderUseBytes bytesLoader)
                         {
                             byte[] data = FileUtils.ReadMemorySnapshot(fileInfo);
                             fileProvider = bytesLoader.UseBytes(data, packageInfo);
                             lengthEstimate = data.Length;
                         }
-                        else if (packageInfo.Length < Int32.MaxValue && packageLoader is IPackageLoaderUseStreamCapability streamUse__)
+                        else if (packageInfo.Length < Int32.MaxValue && packageLoader is IPackageLoaderUseStream streamUse__)
                         {
                             MemoryStream ms = new MemoryStream();
                             using (var s = fileInfo.CreateReadStream())
@@ -417,7 +417,7 @@ namespace Lexical.FileProvider.Package
                     // Try to read from temp file snapshot
                     ITempFileProvider _tempProvider = TempFileProvider;
                     if (fileProvider == null && _tempProvider!=null && packageInfo.Length <= _options.MaxTempSnapshotLength &&
-                        (packageLoader is IPackageLoaderOpenFileCapability || packageLoader is IPackageLoaderUseStreamCapability) )
+                        (packageLoader is IPackageLoaderOpenFile || packageLoader is IPackageLoaderUseStream) )
                     {
                         // Create new temp filename
                         ITempFileHandle tempFileHandle = _tempProvider.CreateTempFile();
@@ -426,7 +426,7 @@ namespace Lexical.FileProvider.Package
                         // Copy to temp file
                         FileStream fs = FileUtils.CopyToFile(fileInfo, tempFileHandle.Filename);
                         // Create file provider
-                        if (packageLoader is IPackageLoaderOpenFileCapability fileOpener)
+                        if (packageLoader is IPackageLoaderOpenFile fileOpener)
                         {
                             // Close file
                             fs.Close();
@@ -435,7 +435,7 @@ namespace Lexical.FileProvider.Package
                             fileProvider = fileOpener.OpenFile(tempFileHandle.Filename, packageInfo);
                             lengthEstimate = (long)(fileInfo.Length * openFileCoefficient);
                         }
-                        else if (packageLoader is IPackageLoaderUseStreamCapability streamUse____)
+                        else if (packageLoader is IPackageLoaderUseStream streamUse____)
                         {
                             fileProvider = streamUse____.UseStream(fs, packageInfo);
                             if (fs is IDisposable disposable_) (disposables ?? (disposables = new List<IDisposable>())).Add(disposable_);
@@ -448,7 +448,7 @@ namespace Lexical.FileProvider.Package
                     }
 
                     // Try to stream, cascading streaming can be slow, so use this option as the very last choice. Also, open stream can lock the parent. 
-                    if (fileProvider == null && allowOpenFile && packageLoader is IPackageLoaderUseStreamCapability __streamUse__)
+                    if (fileProvider == null && allowOpenFile && packageLoader is IPackageLoaderUseStream __streamUse__)
                     {
                         Stream s = fileInfo.CreateReadStream();
                         if (s.CanRead && s.CanSeek)

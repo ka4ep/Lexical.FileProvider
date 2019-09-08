@@ -14,7 +14,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// <summary>
     /// Uses <see cref="_ZipFileProvider"/> to open archive file.
     /// </summary>
-    public class _Zip : IPackageLoaderOpenFileCapability, IPackageLoaderUseStreamCapability, IPackageLoaderUseBytesCapability
+    public class _Zip : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
         private static _Zip singleton = new _Zip();
 

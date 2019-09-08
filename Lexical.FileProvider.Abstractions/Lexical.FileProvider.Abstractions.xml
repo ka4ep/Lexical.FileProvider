@@ -529,11 +529,11 @@
             
             The implementing class must implement one or more of the following sub-interfaces:
             <list type="bullet">
-               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderOpenFileCapability"/></item>
-               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderLoadFileCapability"/></item>
-               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderUseStreamCapability"/></item>
-               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderLoadFromStreamCapability"/></item>
-               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderUseBytesCapability"/></item>
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderOpenFile"/></item>
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderLoadFile"/></item>
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderUseStream"/></item>
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderLoadFromStream"/></item>
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderUseBytes"/></item>
             </list>
             </summary>
         </member>
@@ -551,12 +551,12 @@
             Unnamed groups are, however, allowed. For example: "\.zip(\.tmp)?"
             </summary>
         </member>
-        <member name="T:Lexical.FileProvider.Package.IPackageLoaderOpenFileCapability">
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderOpenFile">
             <summary>
-            Package loader that has the capability to open a package file as <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/>.
+            Package loader that can open a package file as <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/>.
             </summary>
         </member>
-        <member name="M:Lexical.FileProvider.Package.IPackageLoaderOpenFileCapability.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderOpenFile.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
             <summary>
             Open a package file and keep it open until the file provider is disposed. 
             Return <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> that represents the contents of the open file.
@@ -571,12 +571,12 @@
             <exception cref="T:System.IO.IOException">Problem with io stream</exception>
             <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
         </member>
-        <member name="T:Lexical.FileProvider.Package.IPackageLoaderLoadFileCapability">
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderLoadFile">
             <summary>
-            Package loader that has the capability to load a package file completely.
+            Package loader that cab load a package file completely.
             </summary>
         </member>
-        <member name="M:Lexical.FileProvider.Package.IPackageLoaderLoadFileCapability.LoadFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderLoadFile.LoadFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
             <summary>
             Load a package file completely. The implementation must close the file before the call returns.
             Return <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> that represents the contents of the open file.
@@ -591,12 +591,12 @@
             <exception cref="T:System.IO.IOException">Problem with io stream</exception>
             <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
         </member>
-        <member name="T:Lexical.FileProvider.Package.IPackageLoaderUseStreamCapability">
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderUseStream">
             <summary>
-            Package loader that has the capability use an open <see cref="T:System.IO.Stream"/> to access contents of a package file.
+            Package loader that can open <see cref="T:System.IO.Stream"/> to access contents of a package file.
             </summary>
         </member>
-        <member name="M:Lexical.FileProvider.Package.IPackageLoaderUseStreamCapability.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderUseStream.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
             <summary>
             Use an open <paramref name="stream"/> to read contents from a package file.
             Return a <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> that represent the contents.
@@ -617,12 +617,12 @@
             <exception cref="T:System.IO.IOException">Problem with io stream</exception>
             <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
         </member>
-        <member name="T:Lexical.FileProvider.Package.IPackageLoaderLoadFromStreamCapability">
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderLoadFromStream">
             <summary>
-            Package loader that has the capability load a package completely from an open <see cref="T:System.IO.Stream"/>.
+            Package loader that can load a package completely from an open <see cref="T:System.IO.Stream"/>.
             </summary>
         </member>
-        <member name="M:Lexical.FileProvider.Package.IPackageLoaderLoadFromStreamCapability.LoadFromStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderLoadFromStream.LoadFromStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
             <summary>
             Read package completely from <paramref name="stream"/> and return representation of contents as <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/>.
             The implementation and the returned <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> does not take ownership of the stream. 
@@ -637,12 +637,12 @@
             <exception cref="T:System.IO.IOException">Problem with io stream</exception>
             <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
         </member>
-        <member name="T:Lexical.FileProvider.Package.IPackageLoaderUseBytesCapability">
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderUseBytes">
             <summary>
-            Package loader that has the capability load a package completely from an bytes.
+            Package loader that can load a package completely from an bytes.
             </summary>
         </member>
-        <member name="M:Lexical.FileProvider.Package.IPackageLoaderUseBytesCapability.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderUseBytes.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
             <summary>
             Load file provider from bytes.
             

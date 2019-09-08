@@ -20,7 +20,7 @@ namespace Lexical.FileProvider.Package
     /// This implementation doesn't work very well and its use is discouraged. Please use DllPackageLoader instead.
     /// </summary>
     [Obsolete("DllPackageLoader works better")]
-    public class ManifestEmbeddedFileProvider : IPackageLoaderLoadFileCapability, IPackageLoaderUseBytesCapability
+    public class ManifestEmbeddedFileProvider : IPackageLoaderLoadFile, IPackageLoaderUseBytes
     {
         private static ManifestEmbeddedFileProvider singleton = new ManifestEmbeddedFileProvider();
 

@@ -79,6 +79,11 @@ namespace Lexical.FileProvider.Common
             this.LastModified = date;
         }
 
+        /// <summary>
+        /// Get entry at <paramref name="subpath"/>.
+        /// </summary>
+        /// <param name="subpath"></param>
+        /// <returns></returns>
         public ArchiveDirectoryEntry GetOrCreateDirectory(string subpath)
         {
             if (subpath == null) throw new ArgumentNullException(nameof(subpath));
@@ -155,14 +160,23 @@ namespace Lexical.FileProvider.Common
             return localDirectory.GetFile(restOfThePath);
         }
 
+        /// <inheritdoc/>
         public bool Exists => true;
+        /// <inheritdoc/>
         public long Length => 0L;
+        /// <inheritdoc/>
         public string PhysicalPath => null;
+        /// <inheritdoc/>
         public DateTimeOffset LastModified { get; set; }
+        /// <inheritdoc/>
         public bool IsDirectory => true;
+        /// <inheritdoc/>
         public Stream CreateReadStream() => throw new NotSupportedException();
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => Entries.GetEnumerator();
+        /// <inheritdoc/>
         public IEnumerator<IFileInfo> GetEnumerator() => ((IEnumerable<IFileInfo>)Entries).GetEnumerator();
+        /// <inheritdoc/>
         public override string ToString() => Name;        
     }
 }

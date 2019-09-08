@@ -29,6 +29,11 @@ namespace Lexical.FileProvider.Package
         /// </summary>
         readonly PackageFileReference directoryReference;
 
+        /// <summary>
+        /// Create contents reader.
+        /// </summary>
+        /// <param name="packageProvider"></param>
+        /// <param name="directoryReference"></param>
         public PackageDirectoryContents(PackageFileProvider packageProvider, PackageFileReference directoryReference)
         {
             this.packageProvider = packageProvider ?? throw new ArgumentNullException(nameof(packageProvider));
@@ -55,6 +60,7 @@ namespace Lexical.FileProvider.Package
             return NotFoundDirectoryContents.Singleton;
         }
 
+        /// <inheritdoc/>
         public bool Exists
             => directoryReference.IsPackageFile || GetDirectoryContents().Exists;
 
@@ -115,12 +121,15 @@ namespace Lexical.FileProvider.Package
             return no_files;
         }
 
+        /// <inheritdoc/>
         public IEnumerator<IFileInfo> GetEnumerator()
             => ((IEnumerable<IFileInfo>)GetFiles()).GetEnumerator();
 
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator()
             => GetFiles().GetEnumerator();
 
+        /// <inheritdoc/>
         public override string ToString()
             => directoryReference.CanonicalPath;
     }

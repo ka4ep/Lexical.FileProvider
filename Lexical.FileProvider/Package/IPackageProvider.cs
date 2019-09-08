@@ -4,9 +4,13 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.FileProvider.Common;
+using System;
 
 namespace Lexical.FileProvider.Package
 {
+    /// <summary>
+    /// Opens package files.
+    /// </summary>
     public interface IPackageProvider
     {
         /// <summary>
@@ -16,7 +20,7 @@ namespace Lexical.FileProvider.Package
         /// 
         /// Returns null, if package failed to open because the error was expected and was suppressed.
         /// </summary>
-        /// <param name="path">package refrence, if null then refers to root file provider</param>
+        /// <param name="path">package reference, if null then refers to root file provider</param>
         /// <returns>
         ///         a handle, to a fileprovider. The handle must be disposed.
         ///         null value, if package failed to open and the error was suppressed. That means that the file is not a package (wrong file format).

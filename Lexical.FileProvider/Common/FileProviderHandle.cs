@@ -50,7 +50,7 @@ namespace Lexical.FileProvider.Common
         /// <summary>
         /// Create new handle to file provider.
         /// </summary>
-        /// <param name="parent">(optional) parent that is notified of dispose</param>
+        /// <param name="disposeAction">(optional) object that is notified of dispose</param>
         /// <param name="state">(optional) action's argument</param>
         /// <param name="fileProvider"></param>
         public FileProviderHandle(Action<object> disposeAction, object state, IFileProvider fileProvider)
@@ -60,6 +60,9 @@ namespace Lexical.FileProvider.Common
             this.fileProvider = fileProvider; //?? throw new ArgumentNullException(nameof(fileProvider));
         }
 
+        /// <summary>
+        /// Dispose.
+        /// </summary>
         public void Dispose()
         {
             // Only one thread can dispose, and only once
@@ -96,6 +99,11 @@ namespace Lexical.FileProvider.Common
             return dir;
         }
 
+        /// <summary>
+        /// Get file info
+        /// </summary>
+        /// <param name="subpath"></param>
+        /// <returns>file info</returns>
         public IFileInfo GetFileInfo(string subpath)
         {
             // Get reference
@@ -108,6 +116,11 @@ namespace Lexical.FileProvider.Common
             return _fileProvider.GetFileInfo(subpath);
         }
 
+        /// <summary>
+        /// Watch file.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public IChangeToken Watch(string filter)
         {
             // Get reference

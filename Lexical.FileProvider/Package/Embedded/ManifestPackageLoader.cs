@@ -34,6 +34,12 @@ namespace Lexical.FileProvider.Package
         /// </summary>
         public string FileExtensionPattern => @"\.dll|\.exe";
 
+        /// <summary>
+        /// Load manifest of a managed .dll file.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
+        /// <returns></returns>
         public IFileProvider LoadFile(string filename, IPackageLoadInfo packageInfo)
         {
             string path = Path.GetFullPath(filename);
@@ -88,6 +94,7 @@ namespace Lexical.FileProvider.Package
         /// Load from byte[]
         /// </summary>
         /// <param name="data"></param>
+        /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
         /// <returns></returns>
         public IFileProvider UseBytes(byte[] data, IPackageLoadInfo packageInfo)
         {

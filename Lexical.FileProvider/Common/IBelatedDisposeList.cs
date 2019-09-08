@@ -8,6 +8,9 @@ using System.Collections.Generic;
 
 namespace Lexical.FileProvider.Common
 {
+    /// <summary>
+    /// Interface for objects whose dispose can be belated. 
+    /// </summary>
     public interface IBelatedDisposeList : IDisposable
     {
         /// <summary>
@@ -22,7 +25,7 @@ namespace Lexical.FileProvider.Common
         /// If the implementing object has already been disposed, this method immediately disposes the <paramref name="disposable"/>.
         /// </summary>
         /// <param name="disposable"></param>
-        /// <returns>true if was added to list, false if wasn't but was disposed immediately</returns>
+        /// <returns>true if <paramref name="disposable"/> was added to list. False if wasn't added, but instead <paramref name="disposable"/> was disposed immediately</returns>
         bool AddBelatedDispose(IDisposable disposable);
 
         /// <summary>
@@ -31,7 +34,7 @@ namespace Lexical.FileProvider.Common
         /// If the implementing object has already been disposed, this method immediately disposes the <paramref name="disposables"/>.
         /// </summary>
         /// <param name="disposables"></param>
-        /// <returns>true if were added to list, false if were disposed immediately</returns>
+        /// <returns>true if <paramref name="disposables"/> were added to list. False if were not added, but instead <paramref name="disposables"/> were disposed immediately</returns>
         bool AddBelatedDisposes(IEnumerable<IDisposable> disposables);
 
         /// <summary>

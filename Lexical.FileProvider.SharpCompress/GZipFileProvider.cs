@@ -25,6 +25,7 @@ namespace Lexical.FileProvider
         /// Create file provider that reads one entry from <paramref name="archive"/>.
         /// </summary>
         /// <param name="archive"></param>
+        /// <param name="entryName">Entry name of the whole package</param>
         /// <param name="hintPath">(optional) archive name "folder/document.txt.gz", entry name is extracted by removing the folder (separator '/') and last extension.</param>
         /// <param name="dateTime">(optional) Date time for folder entries</param>
         public GZipFileProvider(GZipArchive archive, string entryName, string hintPath = null, DateTimeOffset? dateTime = null) : base(hintPath, dateTime)
@@ -44,9 +45,9 @@ namespace Lexical.FileProvider
         /// Create file provider that re-opens archive.
         /// </summary>
         /// <param name="archiveOpener"></param>
+        /// <param name="entryName">Entry name of the whole package</param>
         /// <param name="hintPath">(optional) archive name "folder/document.txt.gz", entry name is extracted by removing the folder (separator '/') and last extension.</param>
         /// <param name="dateTime">Date time for folder entries</param>
-        /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
         /// <exception cref="IOException">On I/O error</exception>
         /// <exception cref="PackageException.LoadError">on file format error</exception>
         public GZipFileProvider(Func<GZipArchive> archiveOpener, string entryName, string hintPath = null, DateTimeOffset? dateTime = default) : base(hintPath, dateTime)
@@ -103,7 +104,7 @@ namespace Lexical.FileProvider
         /// To dispose stream along with its file provider, construct it like this: <code>new GZipFileProvider(stream).AddDisposable(stream)</code>
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="entryName"></param>
+        /// <param name="entryName">Entry name of the whole package</param>
         /// <param name="hintPath">(optional) clue of the file that is being opened</param>
         /// <param name="dateTime">Date time for folder entries</param>
         /// <exception cref="IOException">On I/O error</exception>
@@ -115,12 +116,19 @@ namespace Lexical.FileProvider
         /// Open .gz file for reading. Opening from a file allows concurrent reading of .gz entries.
         /// </summary>
         /// <param name="filepath">file name</param>
+        /// <param name="entryName">Entry name of the whole package</param>
         /// <param name="hintPath">(optional) clue of the file that is being opened</param>
+        /// <param name="dateTime">Date time for folder entries</param>
         /// <exception cref="IOException">On I/O error</exception>
         /// <exception cref="PackageException.LoadError">on .gz error</exception>
         public GZipFileProvider(string filepath, String entryName, String hintPath = null, DateTimeOffset? dateTime = default)
             : this(() => GZipArchive.Open(filepath), entryName, hintPath, dateTime ?? File.GetLastWriteTimeUtc(filepath)) { }
 
+        /// <summary>
+        /// Add <paramref name="disposable"/> to be disposed along with the object.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
         public GZipFileProvider AddDisposable(object disposable)
         {
             if (disposable is IDisposable toDispose) ((IDisposeList)this).AddDisposable(toDispose);
@@ -171,13 +179,43 @@ namespace Lexical.FileProvider
 
     }
 
+    /// <summary>
+    /// Work-around to <see cref="Stream"/> that replaces <see cref="Length"/> value.
+    /// </summary>
     public class GZipStreamFix : StreamHandle
     {
+        /// <summary>
+        /// New length value.
+        /// </summary>
         readonly long newLength;
+
+        /// <summary>
+        /// Overridden length
+        /// </summary>
         public override long Length => newLength;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool CanSeek => false;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool CanWrite => false;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool CanTimeout => false;
+
+        /// <summary>
+        /// Create stream with overriding Length value.
+        /// </summary>
+        /// <param name="sourceStream"></param>
+        /// <param name="disposeHandle"></param>
+        /// <param name="disposeAction"></param>
+        /// <param name="newLength"></param>
         public GZipStreamFix(Stream sourceStream, IDisposable disposeHandle, Action disposeAction, long newLength) : base(sourceStream, disposeHandle, disposeAction)
         {
             this.newLength = newLength;

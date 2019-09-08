@@ -327,15 +327,22 @@ namespace Lexical.FileProvider
 
         public EmbeddedResourceEntry(DllFileProvider fileProvider, EmbeddedResource resource, DateTimeOffset date)
         {
+            this.date = date;
             this.resource = resource;
             this.fileProvider = fileProvider;
         }
 
+        /// <inheritdoc/>
         public bool Exists => true;
+        /// <inheritdoc/>
         public long Length => Data.Length;
+        /// <inheritdoc/>
         public string PhysicalPath => null;
+        /// <inheritdoc/>
         public string Name => resource.Name;
+        /// <inheritdoc/>
         public DateTimeOffset LastModified => date;
+        /// <inheritdoc/>
         public bool IsDirectory => false;
 
         public Stream CreateReadStream()

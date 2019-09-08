@@ -20,7 +20,22 @@ namespace Lexical.FileProvider.Utils
     {
         static string MakeRegexPattern(string globPattern, string directorySeparatorCharacters)
             => "^" + GlobPatternFactory.Create(directorySeparatorCharacters).CreateRegexText(globPattern ?? throw new ArgumentNullException(nameof(globPattern))) + "$";
+
+        /// <summary>
+        /// Construct a regular expression pattern with glob pattern.
+        /// 
+        /// For example: new GlobPattern("**.zip", "/");
+        /// </summary>
+        /// <param name="globPattern"></param>
+        /// <param name="directorySeparatorCharacters"></param>
         public GlobPattern(string globPattern, string directorySeparatorCharacters) : base(MakeRegexPattern(globPattern, directorySeparatorCharacters)) { }
+
+        /// <summary>
+        /// Construct a regular expression pattern with glob pattern.
+        /// </summary>
+        /// <param name="globPattern"></param>
+        /// <param name="directorySeparatorCharacters"></param>
+        /// <param name="options"></param>
         public GlobPattern(string globPattern, string directorySeparatorCharacters, RegexOptions options) : base(MakeRegexPattern(globPattern, directorySeparatorCharacters), options) { }
     }
 
@@ -121,12 +136,26 @@ namespace Lexical.FileProvider.Utils
             return Regex.Escape(match.Value);
         }
 
+        /// <summary>
+        /// Convert <paramref name="globPattern"/> into regular expression pattern string.
+        /// </summary>
+        /// <param name="globPattern"></param>
+        /// <returns></returns>
         public string CreateRegexText(string globPattern)
             => GlobPattern.Replace(globPattern, matchEvaluator);
 
+        /// <summary>
+        /// Construct <paramref name="globPattern"/> into a <see cref="Regex"/>.
+        /// </summary>
+        /// <param name="globPattern"></param>
+        /// <returns></returns>
         public Regex CreateRegex(string globPattern)
             => new Regex("^" + CreateRegexText(globPattern) + "$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+        /// <summary>
+        /// Print info.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().FullName}(DirectorySeparators={DirectorySeparatorChars})";
     }

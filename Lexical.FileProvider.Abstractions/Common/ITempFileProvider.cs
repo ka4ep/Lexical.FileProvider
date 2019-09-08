@@ -42,6 +42,9 @@ namespace Lexical.FileProvider.Common
     }
     // </interfaces>
 
+    /// <summary>
+    /// <see cref="ITempFileHandle"/> extension methods.
+    /// </summary>
     public static class TempFileProviderExtensions
     {
         /// <summary>

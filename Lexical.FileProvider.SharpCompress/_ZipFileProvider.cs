@@ -53,7 +53,7 @@ namespace Lexical.FileProvider
         /// </summary>
         /// <param name="archiveOpener"></param>
         /// <param name="pathHint">(optional) clue of the file that is being opened</param>
-        /// <param name="dateTime">Date time for folder entries</param>
+        /// <param name="dateTime">(optional) time for folder entries</param>
         /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
         /// <exception cref="IOException">On I/O error</exception>
         /// <exception cref="PackageException.LoadError">on zip error</exception>
@@ -64,11 +64,17 @@ namespace Lexical.FileProvider
         /// </summary>
         /// <param name="filename">file name</param>
         /// <param name="pathHint">(optional) clue of the file that is being opened</param>
+        /// <param name="dateTime">(optional) time for folder entries</param>
         /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
         /// <exception cref="IOException">On I/O error</exception>
         /// <exception cref="PackageException.LoadError">on zip error</exception>
         public _ZipFileProvider(string filename, String pathHint = null, DateTimeOffset? dateTime = default, bool convertBackslashesToSlashes = defaultConvertBackslashesToSlashes) : base(()=>ZipArchive.Open(filename), pathHint, dateTime??File.GetLastWriteTimeUtc(filename), convertBackslashesToSlashes) { }
         
+        /// <summary>
+        /// Add <paramref name="disposable"/> to be disposed along with the objet.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
         public _ZipFileProvider AddDisposable(object disposable)
         {
             if (disposable is IDisposable toDispose) ((IDisposeList)this).AddDisposable(toDispose);

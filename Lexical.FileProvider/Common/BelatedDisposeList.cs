@@ -272,6 +272,9 @@ namespace Lexical.FileProvider.Common
             }
         }
 
+        /// <summary>
+        /// Dispose the list object
+        /// </summary>
         public virtual void Dispose()
         {
             // Is disposing

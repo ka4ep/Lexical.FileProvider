@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.IO;
 
 namespace Lexical.FileProvider.Common
 {
@@ -37,6 +38,11 @@ namespace Lexical.FileProvider.Common
         /// </summary>
         public string Suffix { get; set; }
 
+        /// <summary>
+        /// Copy settings from <paramref name="src"/>.
+        /// </summary>
+        /// <param name="src"></param>
+        /// <returns></returns>
         public TempFileProviderOptions ReadFrom(TempFileProviderOptions src)
         {
             this.Directory = src.Directory;
@@ -45,12 +51,27 @@ namespace Lexical.FileProvider.Common
             return this;
         }
 
+        /// <summary>
+        /// Calculate hashcode.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
             => (Directory == null ? 0 : Directory.GetHashCode() * 7) + (Prefix == null ? 0 : Prefix.GetHashCode() * 3) + (Suffix == null ? 0 : Suffix.GetHashCode() * 5);
 
+        /// <summary>
+        /// Compare equal contents.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
             => obj is TempFileProviderOptions options ? Compare(Directory, options?.Directory) && Compare(Prefix, options?.Prefix) && Compare(Suffix, options?.Suffix) : false;
 
+        /// <summary>
+        /// Equal content comparison that approves nulls and considers two nulls are equal.
+        /// </summary>
+        /// <param name="a">(optional)</param>
+        /// <param name="b">(optional)</param>
+        /// <returns></returns>
         static bool Compare(object a, object b)
         {
             if (a == null && b == null) return true;
@@ -58,9 +79,17 @@ namespace Lexical.FileProvider.Common
             return a.Equals(b);
         }
 
+        /// <summary>
+        /// Create a copy
+        /// </summary>
+        /// <returns></returns>
         public object Clone()
             => new TempFileProviderOptions().ReadFrom(this);
 
+        /// <summary>
+        /// Print info.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}(Directory={Directory}, Prefix={Prefix}, Suffix={Suffix})";
     }

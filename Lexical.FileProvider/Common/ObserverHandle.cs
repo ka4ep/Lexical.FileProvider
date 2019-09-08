@@ -10,19 +10,19 @@ using System.Threading;
 namespace Lexical.FileProvider.Common
 {
     /// <summary>
-    /// A disposable handle that represents one subscription of <see cref="T"/> from <see cref="IObservable{T}"/>.
+    /// A disposable handle that represents a subscription of <typeparamref name="T"/> from <see cref="IObservable{T}"/>.
     /// </summary>
     public class ObserverHandle<T> : IDisposable
     {
         /// <summary>
         /// Unsubscribe action
         /// </summary>
-        Action<IObserver<PackageEvent>> unsubscribeAction;
+        Action<IObserver<T>> unsubscribeAction;
 
         /// <summary>
         /// subscribed observer
         /// </summary>
-        IObserver<PackageEvent> observer;
+        IObserver<T> observer;
 
         /// <summary>
         /// 0 - not disposed
@@ -35,7 +35,12 @@ namespace Lexical.FileProvider.Common
         /// </summary>
         public bool IsDisposed => Interlocked.Read(ref disposing) != 0L;
 
-        public ObserverHandle(Action<IObserver<PackageEvent>> unsubscribeAction, IObserver<PackageEvent> observer)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="unsubscribeAction"></param>
+        /// <param name="observer"></param>
+        public ObserverHandle(Action<IObserver<T>> unsubscribeAction, IObserver<T> observer)
         {
             this.unsubscribeAction = unsubscribeAction;
             this.observer = observer ?? throw new ArgumentNullException(nameof(observer));

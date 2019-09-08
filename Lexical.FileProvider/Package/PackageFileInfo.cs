@@ -27,6 +27,11 @@ namespace Lexical.FileProvider.Package
         /// </summary>
         readonly PackageFileReference fileReference;
 
+        /// <summary>
+        /// Create package info
+        /// </summary>
+        /// <param name="packageProvider"></param>
+        /// <param name="fileReference"></param>
         public PackageFileInfo(IPackageProvider packageProvider, PackageFileReference fileReference)
         {
             this.packageProvider = packageProvider ?? throw new ArgumentNullException(nameof(packageProvider));
@@ -60,12 +65,21 @@ namespace Lexical.FileProvider.Package
                 return fp?.GetDirectoryContents(fileReference.Name) ?? NotFoundDirectoryContents.Singleton;
         }
 
+        /// <summary>
+        /// Test if file exists
+        /// </summary>
         public bool Exists
             => GetFileInfo().Exists;
 
+        /// <summary>
+        /// Get file length
+        /// </summary>
         public long Length
             => GetFileInfo().Length;
 
+        /// <summary>
+        /// Get path
+        /// </summary>
         public string PhysicalPath
             => GetFileInfo().PhysicalPath;
 
@@ -90,12 +104,22 @@ namespace Lexical.FileProvider.Package
             return fileReference.Name;
         }
 
+        /// <summary>
+        /// Last modified date
+        /// </summary>
         public DateTimeOffset LastModified
             => GetFileInfo().LastModified;
 
+        /// <summary>
+        /// Test if is directory
+        /// </summary>
         public bool IsDirectory
             => fileReference.IsPackageFile || (fileReference.Parent == null && fileReference.Name == "") || GetDirectoryInfo().Exists;
 
+        /// <summary>
+        /// Open stream
+        /// </summary>
+        /// <returns></returns>
         public Stream CreateReadStream()
         {
             for (var _ref = fileReference; _ref != null; _ref = _ref.Parent)
@@ -119,6 +143,10 @@ namespace Lexical.FileProvider.Package
             throw new FileNotFoundException($"The package {fileReference?.Parent?.Name} does not exist.");
         }
 
+        /// <summary>
+        /// Print info.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => fileReference.CanonicalPath;
     }

@@ -54,7 +54,8 @@ namespace Lexical.FileProvider.PackageLoader
         /// Is thread-safe and thread-scalable (concurrent use is possible).
         /// </summary>
         /// <param name="filepath"></param>
-        /// <returns></returns>
+        /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
+        /// <returns>file provider to the contents of the package</returns>
         /// <exception cref="IOException">On I/O error</exception>
         /// <exception cref="PackageException.LoadError">on .tar error</exception>
         public IFileProvider OpenFile(string filepath, IPackageLoadInfo packageInfo)
@@ -74,8 +75,8 @@ namespace Lexical.FileProvider.PackageLoader
         /// Is thread-safe, but not thread-scalable (locks threads).
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="filename">(optional) clue of the file that is being opened</param>
-        /// <returns></returns>
+        /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
+        /// <returns>file provider to the contents of the package</returns>
         /// <exception cref="IOException">On I/O error</exception>
         /// <exception cref="PackageException.LoadError">on .tar error</exception>
         public IFileProvider UseStream(Stream stream, IPackageLoadInfo packageInfo)
@@ -94,8 +95,8 @@ namespace Lexical.FileProvider.PackageLoader
         /// Read archive from a byte[]. The caller must close the returned file provider.
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="packageInfo"></param>
-        /// <returns></returns>
+        /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
+        /// <returns>file provider to the contents of the package</returns>
         public IFileProvider UseBytes(byte[] data, IPackageLoadInfo packageInfo = null)
         {
             try

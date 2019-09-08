@@ -111,6 +111,9 @@ namespace Lexical.FileProvider.Package
         static Action<object> handleDisposeAction = state => Interlocked.Decrement(ref (state as PackageEntry).handleCount);
     }
 
+    /// <summary>
+    /// <see cref="PackageEntry"/> extension methods.
+    /// </summary>
     public static class PackageEntryExtensions
     {
         /// <summary>
@@ -129,9 +132,9 @@ namespace Lexical.FileProvider.Package
         }
 
         /// <summary>
-        /// Add <paramref name="disposable"/> to be disposed along with <paramref name="packageEntry"/>.
+        /// Add <paramref name="disposables"/> to be disposed along with <paramref name="packageEntry"/>.
         /// 
-        /// If <paramref name="disposable"/> is not <see cref="IDisposable"/>, then it's not added.
+        /// If <paramref name="disposables"/> is not <see cref="IDisposable"/>, then it's not added.
         /// </summary>
         /// <param name="packageEntry"></param>
         /// <param name="disposables">object(s) to dispose</param>

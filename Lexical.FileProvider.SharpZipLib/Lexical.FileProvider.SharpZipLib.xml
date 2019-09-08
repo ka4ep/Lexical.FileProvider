@@ -1,0 +1,296 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lexical.FileProvider.SharpZipLib</name>
+    </assembly>
+    <members>
+        <member name="T:Lexical.FileProvider.BZip2FileProvider">
+            <summary>
+            Reads .bzip2 file using SharpZipLib.
+            
+            See <see href="https://github.com/icsharpcode/SharpZipLib"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.BZip2FileProvider.#ctor(System.String,System.String,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create bzip2 file provider from .bzip2 file. 
+            
+            Has one entry by name of <paramref name="entryName"/>. 
+            Reads the whole stream once just to get the entry length.
+            </summary>
+            <param name="filepath"></param>
+            <param name="entryName"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="lastModified">Date time for folder entries</param>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="M:Lexical.FileProvider.BZip2FileProvider.#ctor(System.Byte[],System.String,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create bzip2 file provider from byte[].
+            
+            Has one entry by name of <paramref name="entryName"/>. 
+            Reads the whole stream once just to get the entry length.
+            </summary>
+            <param name="data"></param>
+            <param name="entryName"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="lastModified">Date time for folder entries</param>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="M:Lexical.FileProvider.BZip2FileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the object.
+            </summary>
+            <param name="disposable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.BZip2FileProvider.AddBelatedDispose(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.BZip2FileProvider.CalculateLength(System.Func{System.IO.Stream})">
+            <summary>
+            Calculate length by extracting the whole thing once. 
+            It's bad for performance, but needed for maximum interoperability
+            </summary>
+            <param name="opener"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.BZip2StreamFix">
+            <summary>
+            <see cref="T:ICSharpCode.SharpZipLib.BZip2.BZip2InputStream"/> reports wrong length.
+            This class fixes the length value.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.BZip2StreamFix.Length">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.BZip2StreamFix.CanSeek">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.BZip2StreamFix.CanWrite">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.BZip2StreamFix.CanTimeout">
+            <inheritdoc/>
+        </member>
+        <member name="M:Lexical.FileProvider.BZip2StreamFix.#ctor(ICSharpCode.SharpZipLib.BZip2.BZip2InputStream,System.IDisposable,System.Action,System.Int64)">
+            <summary>
+            Create stream with <paramref name="newLength"/>.
+            </summary>
+            <param name="sourceStream"></param>
+            <param name="disposeHandle"></param>
+            <param name="disposeAction"></param>
+            <param name="newLength"></param>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader.BZip2">
+            <summary>
+            Opens .bzip2 packages using SharpZipLib.
+            
+            See <see href="https://github.com/icsharpcode/SharpZipLib"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.BZip2.Singleton">
+            <summary>
+            Static singleton instance that handles .bzip2 extensions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.BZip2.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.BZip2.#ctor">
+            <summary>
+            Create new package loader that loads .bzip2 files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.BZip2.#ctor(System.String)">
+            <summary>
+            Create new package loader that loads bzip2 files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.BZip2.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Opens a .bzip2 file with zero to multiple open file handles.
+            Is thread-safe and thread-scalable (concurrent use is possible).
+            </summary>
+            <param name="filepath"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns></returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on bzip2 error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.BZip2.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Read archive from a byte[]. The caller must close the returned file provider.
+            </summary>
+            <param name="data"></param>
+            <param name="packageInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Lexical.FileProvider.PackageLoader.BZip2.fallbackEntryName">
+            <summary>
+            Name to use if entry name is not available.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.BZip2.ExtractName(System.String)">
+            <summary>
+            Extracts filename for the content entry.
+            For example "mypath/document.txt.gz" -> "document.txt"
+            
+            If path is not available returns "file"
+            </summary>
+            <param name="path">(optional)</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader.Lzw">
+            <summary>
+            Opens .z packages using SharpZipLib.
+            
+            See <see href="https://github.com/icsharpcode/SharpZipLib"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Lzw.Singleton">
+            <summary>
+            Static singleton instance that handles .Lzw extensions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Lzw.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Lzw.#ctor">
+            <summary>
+            Create new package loader that loads z files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Lzw.#ctor(System.String)">
+            <summary>
+            Create new package loader that loads z files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Lzw.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Opens a .Lzw file with zero to multiple open file handles.
+            Is thread-safe and thread-scalable (concurrent use is possible).
+            </summary>
+            <param name="filepath"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns></returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on z error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Lzw.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Read archive from a byte[]. The caller must close the returned file provider.
+            </summary>
+            <param name="data"></param>
+            <param name="packageInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Lexical.FileProvider.PackageLoader.Lzw.fallbackEntryName">
+            <summary>
+            Name to use if entry name is not available.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Lzw.ExtractName(System.String)">
+            <summary>
+            Extracts filename for the content entry.
+            For example "mypath/document.txt.gz" -> "document.txt"
+            
+            If path is not available returns "file"
+            </summary>
+            <param name="path">(optional)</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.LzwFileProvider">
+            <summary>
+            Reads .z file using SharpZipLib.
+            
+            See <see href="https://github.com/icsharpcode/SharpZipLib"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.LzwFileProvider.#ctor(System.String,System.String,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create Lzw file provider from .z file. 
+            
+            Has one entry by name of <paramref name="entryName"/>. 
+            Reads the whole stream once just to get the entry length.
+            </summary>
+            <param name="filepath"></param>
+            <param name="entryName"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="lastModified">Date time for folder entries</param>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="M:Lexical.FileProvider.LzwFileProvider.#ctor(System.Byte[],System.String,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create Lzw file provider from byte[].
+            
+            Has one entry by name of <paramref name="entryName"/>. 
+            Reads the whole stream once just to get the entry length.
+            </summary>
+            <param name="data"></param>
+            <param name="entryName"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="lastModified">Date time for folder entries</param>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="M:Lexical.FileProvider.LzwFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the obejct.
+            </summary>
+            <param name="disposable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.LzwFileProvider.AddBelatedDispose(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.LzwFileProvider.CalculateLength(System.Func{System.IO.Stream})">
+            <summary>
+            Calculate length by extracting the whole thing once. 
+            It's bad for performance, but needed for maximum interoperability
+            </summary>
+            <param name="opener"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.LzwStreamFix">
+            <summary>
+            <see cref="T:ICSharpCode.SharpZipLib.Lzw.LzwInputStream"/> reports wrong length.
+            This class fixes the length value.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.LzwStreamFix.Length">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.LzwStreamFix.CanSeek">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.LzwStreamFix.CanWrite">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.LzwStreamFix.CanTimeout">
+            <inheritdoc/>
+        </member>
+        <member name="M:Lexical.FileProvider.LzwStreamFix.#ctor(ICSharpCode.SharpZipLib.Lzw.LzwInputStream,System.IDisposable,System.Action,System.Int64)">
+            <summary>
+            Create Length override.
+            </summary>
+            <param name="sourceStream"></param>
+            <param name="disposeHandle"></param>
+            <param name="disposeAction"></param>
+            <param name="newLength"></param>
+        </member>
+    </members>
+</doc>

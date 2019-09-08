@@ -27,7 +27,7 @@ namespace Lexical.FileProvider
         /// <summary>
         /// Create 7z content file provider.
         /// </summary>
-        /// <param name="7zArchive"></param>
+        /// <param name="archive"></param>
         /// <param name="hintPath">(optional) clue of the file that is being opened</param>
         /// <param name="dateTime">Date time for folder entries</param>
         /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
@@ -65,11 +65,17 @@ namespace Lexical.FileProvider
         /// </summary>
         /// <param name="filepath">file name</param>
         /// <param name="hintPath">(optional) clue of the file that is being opened</param>
+        /// <param name="dateTime">Date time for folder entries</param>
         /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
         /// <exception cref="IOException">On I/O error</exception>
         /// <exception cref="PackageException.LoadError">on 7z error</exception>
         public _7zFileProvider(string filepath, String hintPath = null, DateTimeOffset? dateTime = default, bool convertBackslashesToSlashes = defaultConvertBackslashesToSlashes) : base(()=>SevenZipArchive.Open(filepath), hintPath, dateTime??File.GetLastWriteTimeUtc(filepath), convertBackslashesToSlashes) { }
 
+        /// <summary>
+        /// Add <paramref name="disposable"/> to be disposed along with the object.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
         public _7zFileProvider AddDisposable(object disposable)
         {
             if (disposable is IDisposable toDispose) ((IDisposeList)this).AddDisposable(toDispose);

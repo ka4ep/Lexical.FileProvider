@@ -101,6 +101,11 @@ namespace Lexical.FileProvider.Common
             return startIx == 0 && endIx == path.Length - 1 ? path : startIx < endIx ? path.Substring(startIx, endIx - startIx + 1) : String.Empty;
         }
 
+        /// <summary>
+        /// Watch changes
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public virtual IChangeToken Watch(string filter)
         {
             if (IsDisposed) throw new ObjectDisposedException(GetType().FullName);
@@ -173,7 +178,17 @@ namespace Lexical.FileProvider.Common
     /// </summary>
     public abstract class StreamProvider : IStreamProvider
     {
+        /// <summary>
+        /// Open stream
+        /// </summary>
+        /// <param name="identifier"></param>
+        /// <returns></returns>
         public abstract Stream OpenStream(string identifier);
+
+        /// <summary>
+        /// Dispose provider
+        /// </summary>
+        /// <param name="disposeErrors"></param>
         public abstract void Dispose(ref List<Exception> disposeErrors);
     }
 }

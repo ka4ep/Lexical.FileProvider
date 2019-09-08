@@ -19,6 +19,10 @@ namespace Lexical.FileProvider.Package
         IOptionsMonitor<PackageFileProviderOptionsRecord> monitor;
         IDisposable eventSubscription;
 
+        /// <summary>
+        /// Create adapter.
+        /// </summary>
+        /// <param name="monitor"></param>
         public PackageFileProviderOptionsMonitor(IOptionsMonitor<PackageFileProviderOptionsRecord> monitor)
         {
             this.monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
@@ -59,6 +63,9 @@ namespace Lexical.FileProvider.Package
             dst.PackageLoaders = newArray;
         }
 
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public void Dispose()
             => Interlocked.CompareExchange(ref eventSubscription, null, eventSubscription)?.Dispose();
 

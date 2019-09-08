@@ -10,7 +10,7 @@ using System.IO;
 namespace Lexical.FileProvider.Common
 {
     /// <summary>
-    /// Stream provider that provides a stream for only one entry name.
+    /// Stream provider that provides a <see cref="Stream"/> for one specific entry name.
     /// </summary>
     public class StreamOpener : Lexical.FileProvider.Common.StreamProvider
     {
@@ -29,6 +29,12 @@ namespace Lexical.FileProvider.Common
         /// </summary>
         IBelatedDisposeList belateSource;
 
+        /// <summary>
+        /// Create opener.
+        /// </summary>
+        /// <param name="archiveOpener"></param>
+        /// <param name="entryName"></param>
+        /// <param name="belateSource"></param>
         public StreamOpener(Func<Stream> archiveOpener, string entryName, IBelatedDisposeList belateSource)
         {
             this.streamOpener = archiveOpener ?? throw new ArgumentNullException(nameof(archiveOpener));
@@ -36,12 +42,21 @@ namespace Lexical.FileProvider.Common
             this.belateSource = belateSource;
         }
 
+        /// <summary>
+        /// Dispose 
+        /// </summary>
+        /// <param name="disposeErrors"></param>
         public override void Dispose(ref List<Exception> disposeErrors)
         {
             streamOpener = null;
             belateSource = null;
         }
 
+        /// <summary>
+        /// Open file entry.
+        /// </summary>
+        /// <param name="identifier"></param>
+        /// <returns></returns>
         public override Stream OpenStream(string identifier)
         {
             if (identifier != entryName) return null;

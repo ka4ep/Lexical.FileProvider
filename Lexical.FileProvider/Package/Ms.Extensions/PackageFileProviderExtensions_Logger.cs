@@ -10,6 +10,9 @@ using System.Threading;
 
 namespace Lexical.FileProvider.Package
 {
+    /// <summary>
+    /// <see cref="IPackageFileProviderOptions"/> logging related extension methods.
+    /// </summary>
     public static class PackageFileProviderExtensions_Logger
     {
         /// <summary>
@@ -53,6 +56,7 @@ namespace Lexical.FileProvider.Package
         /// </summary>
         /// <param name="fileProvider"></param>
         /// <param name="logger">(optional) logger</param>
+        /// <param name="logLevel"></param>
         /// <returns></returns>
         public static IObservablePackageFileProvider AddLogger(this IObservablePackageFileProvider fileProvider, ILogger logger, LogLevel logLevel)
         {
@@ -61,32 +65,72 @@ namespace Lexical.FileProvider.Package
         }
     }
 
+    /// <summary>
+    /// Writes <see cref="PackageEvent"/> into <see cref="ILogger"/>.
+    /// </summary>
     public class PackageEventLogger : IObserver<PackageEvent>
     {
+        /// <summary>
+        /// Logger to write events to.
+        /// </summary>
         public ILogger logger;
+
+        /// <summary>
+        /// Threshold to log. The lower (for example <see cref="LogLevel.Trace"/>, more events are written.
+        /// </summary>
         public readonly LogLevel logLevel;
+
+        /// <summary>
+        /// 
+        /// </summary>
         static int eventId = 0;
+
+        /// <summary>
+        /// Formatter function
+        /// </summary>
         private static readonly Func<object, Exception, string> _messageFormatter = (s,e)=>s.ToString();
 
+        /// <summary>
+        /// Create logger
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="logLevel"></param>
         public PackageEventLogger(ILogger logger, LogLevel logLevel)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.logLevel = logLevel;
         }
+
+        /// <summary>
+        /// Create logger with <see cref="ILoggerFactory"/>.
+        /// </summary>
+        /// <param name="loggerFactory"></param>
+        /// <param name="logLevel"></param>
         public PackageEventLogger(ILoggerFactory loggerFactory, LogLevel logLevel)
         {
             this.logger = loggerFactory?.CreateLogger<IPackageFileProvider>() ?? throw new ArgumentNullException(nameof(logger));
             this.logLevel = logLevel;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void OnCompleted()
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="error"></param>
         public void OnError(Exception error)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
         public void OnNext(PackageEvent value)
         {
             int id = Interlocked.Increment(ref eventId);

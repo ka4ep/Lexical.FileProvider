@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace Lexical.FileProvider.Package
 {
+    /// <summary>
+    /// Extension methods for <see cref="PackageFileProvider"/>.
+    /// </summary>
     public static class PackageFileProviderExtensions_CacheEvict
     {
         /// <summary>

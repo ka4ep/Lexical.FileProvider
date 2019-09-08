@@ -25,6 +25,9 @@ namespace Lexical.FileProvider.Package
         ITempFileProvider TempFileProvider { get; set; }
     }
 
+    /// <summary>
+    /// <see cref="IPackageFileProvider"/> extension methods.
+    /// </summary>
     public static class PackageFileProviderExtensions
     {
         /// <summary>

@@ -43,6 +43,12 @@ namespace Lexical.FileProvider.PackageLoader
             this.FileExtensionPattern = fileExtensionPattern ?? throw new ArgumentNullException(nameof(fileExtensionPattern));
         }
 
+        /// <summary>
+        /// Open a .dll file.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="packageInfo"></param>
+        /// <returns>file provider</returns>
         public IFileProvider OpenFile(string filename, IPackageLoadInfo packageInfo)
         {
             try
@@ -55,6 +61,12 @@ namespace Lexical.FileProvider.PackageLoader
             }
         }
 
+        /// <summary>
+        /// Use <paramref name="stream"/> to access contents of a .dll file.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="packageInfo"></param>
+        /// <returns>file provider</returns>
         public IFileProvider UseStream(Stream stream, IPackageLoadInfo packageInfo)
         {
             try
@@ -101,6 +113,12 @@ namespace Lexical.FileProvider.PackageLoader
             this.FileExtensionPattern = fileExtensionPattern ?? throw new ArgumentNullException(nameof(fileExtensionPattern));
         }
 
+        /// <summary>
+        /// Open a .dll file.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="packageInfo"></param>
+        /// <returns>file provider</returns>
         public IFileProvider OpenFile(string filename, IPackageLoadInfo packageInfo)
         {
             try
@@ -113,6 +131,12 @@ namespace Lexical.FileProvider.PackageLoader
             }
         }
 
+        /// <summary>
+        /// Use <paramref name="stream"/> to access contents of a .dll file.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="packageInfo"></param>
+        /// <returns>file provider</returns>
         public IFileProvider UseStream(Stream stream, IPackageLoadInfo packageInfo)
         {
             try

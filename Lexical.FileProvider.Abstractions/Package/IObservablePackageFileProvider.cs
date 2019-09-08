@@ -38,6 +38,9 @@ namespace Lexical.FileProvider.Package
         bool Evict(string filepath);
     }
 
+    /// <summary>
+    /// Package state
+    /// </summary>
     public enum PackageState : int
     {
         /// <summary>
@@ -69,19 +72,52 @@ namespace Lexical.FileProvider.Package
         Evicted
     }
 
+    /// <summary>
+    /// Package load event.
+    /// </summary>
     public class PackageEvent
     {
+        /// <summary>
+        /// Path to package file.
+        /// </summary>
         public string FilePath;
+
+        /// <summary>
+        /// Package file provider
+        /// </summary>
         public IObservablePackageFileProvider FileProvider;
-        public PackageState OldState;        
+
+        /// <summary>
+        /// Previous state
+        /// </summary>
+        public PackageState OldState;
+
+        /// <summary>
+        /// New state
+        /// </summary>
         public PackageState NewState;
+
+        /// <summary>
+        /// The time event occured
+        /// </summary>
         public DateTimeOffset EventTime;
+
+        /// <summary>
+        /// (optional) Error
+        /// </summary>
         public Exception LoadError;
 
+        /// <summary>
+        /// Print info.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().FullName}(NewState={NewState}, OldState={OldState}, EventTime={EventTime}, FilePath={FilePath}, LoadError={LoadError})";
     }
 
+    /// <summary>
+    /// Information about load state of a package.
+    /// </summary>
     public struct PackageInfo
     {
         /// <summary>

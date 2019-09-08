@@ -9,12 +9,16 @@ using System.Collections.Generic;
 
 namespace Lexical.FileProvider.Utils
 {
+    /// <summary>
+    /// <see cref="IFileProvider"/> extension methods.
+    /// </summary>
     public static class FileProviderExtensions
     {
         /// <summary>
         /// List recursively all directories and files. (Root is excluded)
         /// </summary>
         /// <param name="fileProvider"></param>
+        /// <param name="startPath"></param>
         /// <returns>all files and directores, except root</returns>
         public static IEnumerable<IFileInfo> ListAll(this IFileProvider fileProvider, string startPath = "")
         {
@@ -38,6 +42,7 @@ namespace Lexical.FileProvider.Utils
         /// List recursively all directories and files. (Root is excluded)
         /// </summary>
         /// <param name="fileProvider"></param>
+        /// <param name="startPath"></param>
         /// <returns>all paths</returns>
         public static IEnumerable<string> ListAllPaths(this IFileProvider fileProvider, string startPath = "")
         {

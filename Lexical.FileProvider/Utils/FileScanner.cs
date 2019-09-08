@@ -183,6 +183,12 @@ namespace Lexical.FileProvider.Utils
             return this;
         }
 
+        /// <summary>
+        /// Add regular expression pattern to the scanner.
+        /// </summary>
+        /// <param name="subpath">Sub-path to apply pattern from, for example "c:/temp/"</param>
+        /// <param name="regex">Pattern. For example ".*\.zip"</param>
+        /// <returns></returns>
         public FileScanner AddRegex(string subpath, Regex regex)
         {
             PatternSet set;
@@ -191,6 +197,11 @@ namespace Lexical.FileProvider.Utils
             return this;
         }
 
+        /// <summary>
+        /// Set custom <paramref name="taskFactory"/> to use for constructing tasks.
+        /// </summary>
+        /// <param name="taskFactory"></param>
+        /// <returns></returns>
         public FileScanner SetTaskFactory(TaskFactory taskFactory)
         {
             this.TaskFactory = taskFactory;
@@ -220,6 +231,11 @@ namespace Lexical.FileProvider.Utils
             return this;
         }
 
+        /// <summary>
+        /// Set custom evaluator that chooses whether to enter a directory or not.
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
         public FileScanner SetDirectoryEvaluator(Func<string, bool> func)
         {
             this.DirectoryEvaluator = func;
@@ -266,6 +282,9 @@ namespace Lexical.FileProvider.Utils
     /// </summary>
     public class PatternScanner : IEnumerator<string>
     {
+        /// <summary>
+        /// Collection where errors can be placed. Add collection here.
+        /// </summary>
         public IProducerConsumerCollection<Exception> errors;
         IFileProvider fileProvider;
         List<KeyValuePair<string, PatternSet>> paths;
@@ -276,6 +295,17 @@ namespace Lexical.FileProvider.Utils
         bool returnDirectories;
         bool returnFiles;
 
+        /// <summary>
+        /// Create scanner that uses patterns.
+        /// </summary>
+        /// <param name="fileProvider"></param>
+        /// <param name="rootPrefix"></param>
+        /// <param name="patterns"></param>
+        /// <param name="taskFactory"></param>
+        /// <param name="errors"></param>
+        /// <param name="directoryEvaluator"></param>
+        /// <param name="returnDirectories"></param>
+        /// <param name="returnFiles"></param>
         public PatternScanner(IFileProvider fileProvider, string rootPrefix, IEnumerable<KeyValuePair<string, PatternSet>> patterns, TaskFactory taskFactory, IProducerConsumerCollection<Exception> errors, Func<string, bool> directoryEvaluator, bool returnDirectories, bool returnFiles)
         {
             this.fileProvider = fileProvider;
@@ -291,9 +321,15 @@ namespace Lexical.FileProvider.Utils
                 taskFactory.StartNew(this.job.Scan);
         }
 
+        /// <summary>
+        /// Current path.
+        /// </summary>
         public string Current => job?.Current;
         object IEnumerator.Current => job?.Current;
 
+        /// <summary>
+        /// Dispose scanner.
+        /// </summary>
         public void Dispose()
         {
             var j = job;
@@ -301,12 +337,19 @@ namespace Lexical.FileProvider.Utils
             job = null;
         }
 
+        /// <summary>
+        /// Move to next path. May block thread if result is not ready.
+        /// </summary>
+        /// <returns></returns>
         public bool MoveNext()
         {
             var j = job;
             if (j == null) return false; else return j.MoveNext();
         }
 
+        /// <summary>
+        /// Start over.
+        /// </summary>
         public void Reset()
         {
             var j = job;

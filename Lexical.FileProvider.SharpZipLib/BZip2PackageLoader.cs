@@ -48,6 +48,7 @@ namespace Lexical.FileProvider.PackageLoader
         /// Is thread-safe and thread-scalable (concurrent use is possible).
         /// </summary>
         /// <param name="filepath"></param>
+        /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
         /// <returns></returns>
         /// <exception cref="IOException">On I/O error</exception>
         /// <exception cref="PackageException.LoadError">on bzip2 error</exception>

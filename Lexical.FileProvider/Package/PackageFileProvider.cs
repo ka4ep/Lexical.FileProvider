@@ -99,10 +99,12 @@ namespace Lexical.FileProvider.Package
         /// </summary>
         bool needsCanonizalization;
 
+        /*
         /// <summary>
         /// Dispose list for belated disposables.
         /// </summary>
-        //BelatedDisposeList belatedDisposeList;
+        BelatedDisposeList belatedDisposeList;
+        */
 
         /// <summary>
         /// Create new package file provider.
@@ -599,6 +601,11 @@ namespace Lexical.FileProvider.Package
             return suppressException;
         }
 
+        /// <summary>
+        /// Get file info.
+        /// </summary>
+        /// <param name="subpath">Path to a file. Path inside packages is slash "/".</param>
+        /// <returns>File info</returns>
         public IFileInfo GetFileInfo(string subpath)
         {
             // Assert it's not disposed
@@ -620,6 +627,11 @@ namespace Lexical.FileProvider.Package
             return new PackageFileInfo(this, fileReference);
         }
 
+        /// <summary>
+        /// Get directory info
+        /// </summary>
+        /// <param name="subpath">Path to a directory. Path inside packages is slash "/".</param>
+        /// <returns>Directory info</returns>
         public IDirectoryContents GetDirectoryContents(string subpath)
         {
             // Assert it's not disposed
@@ -882,6 +894,11 @@ namespace Lexical.FileProvider.Package
             });
         }
 
+        /// <summary>
+        /// Subscribe to events related to loading and evicting packages.
+        /// </summary>
+        /// <param name="observer">observer receiving events</param>
+        /// <returns>handle that must be disposed</returns>
         public IDisposable Subscribe(IObserver<PackageEvent> observer)
         {
             // Assert args
@@ -927,9 +944,18 @@ namespace Lexical.FileProvider.Package
             }
         }
 
+        /// <summary>
+        /// Get information about loaded packages
+        /// </summary>
+        /// <returns></returns>
         public PackageInfo[] GetPackageInfos()
             => packages.Values.Where(pe => pe != null && pe.state != PackageState.Evicted).Select(pe => ConvertToPackageInfo(pe)).ToArray();
 
+        /// <summary>
+        /// Convert <see cref="PackageEntry"/> to <see cref="PackageInfo"/>.
+        /// </summary>
+        /// <param name="pe"></param>
+        /// <returns></returns>
         static PackageInfo ConvertToPackageInfo(PackageEntry pe)
         {
             PackageInfo pi = new PackageInfo { FilePath = pe.packageReference.CanonicalPath, LastAccessTime = pe.lastAccessTime, LoadTime = pe.loadTime, LoadError = pe.error, State = pe.state };
@@ -937,6 +963,11 @@ namespace Lexical.FileProvider.Package
             return pi;
         }
 
+        /// <summary>
+        /// Get load information about package file.
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <returns>info</returns>
         public PackageInfo GetPackageInfo(string filepath)
         {
             // Assert arts
@@ -1026,11 +1057,10 @@ namespace Lexical.FileProvider.Package
         }
 
         /// <summary>
-        /// Add <paramref name="disposable"/> to be disposed along with <paramref name="fileProvider"/>.
+        /// Add <paramref name="disposable"/> to be disposed along with the package fileprovider.
         /// 
         /// If <paramref name="disposable"/> is not <see cref="IDisposable"/>, then it's not added.
         /// </summary>
-        /// <param name="fileProvider"></param>
         /// <param name="disposable">object to dispose</param>
         /// <returns></returns>
         public PackageFileProvider AddDisposable(object disposable)
@@ -1053,12 +1083,12 @@ namespace Lexical.FileProvider.Package
             return this;
         }
 
+        /*
         /// <summary>
         /// Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
         /// </summary>
         /// <param name="disposable">object to dispose</param>
         /// <returns></returns>
-        /*
         public PackageFileProvider AddBelatedDispose(object disposable)
         {
             if (disposable is IDisposable toDispose) ((IBelatedDisposeList)belatedDisposeList).AddBelatedDispose(toDispose);
@@ -1095,10 +1125,17 @@ namespace Lexical.FileProvider.Package
             return this;
         }
 
+        /// <summary>
+        /// Print info
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}(Options={Options}, FileProvider={FileProvider})";
     }
 
+    /// <summary>
+    /// Information about package load status.
+    /// </summary>
     class PackageLoadInfo : IPackageLoadInfo
     {
         public string Path { get; set; }

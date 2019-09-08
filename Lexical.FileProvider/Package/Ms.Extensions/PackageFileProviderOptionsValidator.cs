@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 namespace Lexical.FileProvider.Package
 {
+    /// <summary>
+    /// Validator that validates <see cref="PackageFileProviderOptionsRecord"/>.
+    /// </summary>
     public class PackageFileProviderOptionsValidator : IValidateOptions<PackageFileProviderOptionsRecord>
     {
         private static readonly PackageFileProviderOptionsValidator level0 = new PackageFileProviderOptionsValidator(0);
@@ -48,6 +51,12 @@ namespace Lexical.FileProvider.Package
             this.ValidationLevel = validationLevel;
         }
 
+        /// <summary>
+        /// Validate options.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="options"></param>
+        /// <returns>Validation result</returns>
         public ValidateOptionsResult Validate(string name, PackageFileProviderOptionsRecord options)
         {
             List<string> failMessages = null;

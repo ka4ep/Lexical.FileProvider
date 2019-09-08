@@ -70,6 +70,11 @@ namespace Lexical.FileProvider
         /// <exception cref="PackageException.LoadError">on tar error</exception>
         public TarFileProvider(string filename, String pathHint = null, DateTimeOffset? dateTime = default, bool convertBackslashesToSlashes = defaultConvertBackslashesToSlashes) : base(()=>TarArchive.Open(filename), pathHint, dateTime??File.GetLastWriteTimeUtc(filename), convertBackslashesToSlashes) { }
 
+        /// <summary>
+        /// Add <paramref name="disposable"/> to be disposed along with the object.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
         public TarFileProvider AddDisposable(object disposable)
         {
             if (disposable is IDisposable toDispose) ((IDisposeList)this).AddDisposable(toDispose);

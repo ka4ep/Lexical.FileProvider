@@ -1,0 +1,776 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lexical.FileProvider.SharpCompress</name>
+    </assembly>
+    <members>
+        <member name="T:Lexical.FileProvider.SharpCompress.Internal.ArchiveFileProvider">
+            <summary>
+            Recycle archive file provider code from Lexical.FileProvider.Zip. Adapted to use <see cref="T:SharpCompress.Archives.IArchive"/>.
+            
+            <see href="https://github.com/adamhathcock/sharpcompress"/>
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.SharpCompress.Internal.ArchiveFileProvider.#ctor(SharpCompress.Archives.IArchive,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that reads <paramref name="archive"/>.
+            </summary>
+            <param name="archive"></param>
+            <param name="hintPath">(optional) clue to path of the package file</param>
+            <param name="dateTime">(optional) Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        </member>
+        <member name="M:Lexical.FileProvider.SharpCompress.Internal.ArchiveFileProvider.#ctor(System.Func{SharpCompress.Archives.IArchive},System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that re-opens archive.
+            </summary>
+            <param name="archiveOpener"></param>
+            <param name="hintPath">(optional) clue to path of the package file</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on file format error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.SharpCompress.Internal.ArchiveFileProvider.AddArchiveEntries(Lexical.FileProvider.Common.ArchiveDirectoryEntry,System.Collections.Generic.IEnumerable{SharpCompress.Archives.IArchiveEntry},Lexical.FileProvider.Common.IStreamProvider,System.Boolean)">
+            <summary>
+            Add <paramref name="archiveEntries"/> into tree structure.
+            </summary>
+            <param name="root"></param>
+            <param name="archiveEntries"></param>
+            <param name="streamProvider">stream provider for files</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <returns>this</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.SharpCompress.Internal.ArchiveOpenerStreamProvider">
+            <summary>
+            <see cref="T:Lexical.FileProvider.Common.IStreamProvider"/> that re-opens <see cref="T:SharpCompress.Archives.IArchive"/>s.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.GZipFileProvider">
+            <summary>
+            Uses SharpCompress to open .gz files.
+            
+            <see href="https://github.com/adamhathcock/sharpcompress"/>
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.GZipFileProvider.#ctor(SharpCompress.Archives.GZip.GZipArchive,System.String,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create file provider that reads one entry from <paramref name="archive"/>.
+            </summary>
+            <param name="archive"></param>
+            <param name="entryName">Entry name of the whole package</param>
+            <param name="hintPath">(optional) archive name "folder/document.txt.gz", entry name is extracted by removing the folder (separator '/') and last extension.</param>
+            <param name="dateTime">(optional) Date time for folder entries</param>
+        </member>
+        <member name="M:Lexical.FileProvider.GZipFileProvider.#ctor(System.Func{SharpCompress.Archives.GZip.GZipArchive},System.String,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create file provider that re-opens archive.
+            </summary>
+            <param name="archiveOpener"></param>
+            <param name="entryName">Entry name of the whole package</param>
+            <param name="hintPath">(optional) archive name "folder/document.txt.gz", entry name is extracted by removing the folder (separator '/') and last extension.</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on file format error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.GZipFileProvider.#ctor(System.IO.Stream,System.String,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Create file provider that reads .gz content from a readable and seekable stream. 
+            
+            Note, that one file entry stream is allowed to be open at the same time. Others will wait in lock.
+            
+            Does not dispose the <paramref name="stream"/> with the file provider.
+            To dispose stream along with its file provider, construct it like this: <code>new GZipFileProvider(stream).AddDisposable(stream)</code>
+            </summary>
+            <param name="stream"></param>
+            <param name="entryName">Entry name of the whole package</param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .gz error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.GZipFileProvider.#ctor(System.String,System.String,System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Open .gz file for reading. Opening from a file allows concurrent reading of .gz entries.
+            </summary>
+            <param name="filepath">file name</param>
+            <param name="entryName">Entry name of the whole package</param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .gz error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.GZipFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the object.
+            </summary>
+            <param name="disposable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.GZipFileProvider.AddBelatedDispose(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.GZipFileProvider.CalculateLength(System.Func{System.IO.Stream})">
+            <summary>
+            Calculate length by extracting the whole thing once. 
+            It's bad for performance, but needed for maximum interoperability
+            </summary>
+            <param name="opener"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.GZipStreamFix">
+            <summary>
+            Work-around to <see cref="T:System.IO.Stream"/> that replaces <see cref="P:Lexical.FileProvider.GZipStreamFix.Length"/> value.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.GZipStreamFix.newLength">
+            <summary>
+            New length value.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.GZipStreamFix.Length">
+            <summary>
+            Overridden length
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.GZipStreamFix.CanSeek">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.GZipStreamFix.CanWrite">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.GZipStreamFix.CanTimeout">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.GZipStreamFix.#ctor(System.IO.Stream,System.IDisposable,System.Action,System.Int64)">
+            <summary>
+            Create stream with overriding Length value.
+            </summary>
+            <param name="sourceStream"></param>
+            <param name="disposeHandle"></param>
+            <param name="disposeAction"></param>
+            <param name="newLength"></param>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader.GZip">
+            <summary>
+            Uses <see cref="T:Lexical.FileProvider.GZipFileProvider"/> to open .gz files.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.GZip.Singleton">
+            <summary>
+            Static singleton instance that handles .gz extensions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.GZip.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.GZip.#ctor">
+            <summary>
+            Create new package loader that loads .gz files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.GZip.#ctor(System.String)">
+            <summary>
+            Create new package loader that loads .gz files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.GZip.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Opens a .gz file with zero to multiple open file handles.
+            Is thread-safe and thread-scalable (concurrent use is possible).
+            </summary>
+            <param name="filepath"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .gz error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.GZip.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Reads .gz file from a stream. Takes ownership of the stream (closes it). 
+            Is thread-safe, but not thread-scalable (locks threads).
+            </summary>
+            <param name="stream"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .gz error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.GZip.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Read archive from a byte[]. The caller must close the returned file provider.
+            </summary>
+            <param name="data"></param>
+            <param name="packageInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Lexical.FileProvider.PackageLoader.GZip.fallbackEntryName">
+            <summary>
+            Name to use if entry name is not available.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.GZip.ExtractName(System.String)">
+            <summary>
+            Extracts filename for the content entry.
+            For example "mypath/document.txt.gz" -> "document.txt"
+            
+            If path is not available returns "file"
+            </summary>
+            <param name="path">(optional)</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader.Rar">
+            <summary>
+            Uses <see cref="T:Lexical.FileProvider.RarFileProvider"/> to open .rar files.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Rar.Singleton">
+            <summary>
+            Static singleton instance that handles .rar extensions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Rar.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.PackageLoader.Rar.convertBackslashesToSlashes">
+            <summary>
+            Policy whether to convert '\' to '/' in the file paths that this package loader handles.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Rar.#ctor">
+            <summary>
+            Create new package loader that loads .rar files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Rar.#ctor(System.String,System.Boolean)">
+            <summary>
+            Create new package loader that loads .rar files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Rar.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Opens a .rar file with zero to multiple open file handles.
+            Is thread-safe and thread-scalable (concurrent use is possible).
+            </summary>
+            <param name="filepath"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .rar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Rar.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Reads .rar file from a stream. Takes ownership of the stream (closes it). 
+            Is thread-safe, but not thread-scalable (locks threads).
+            </summary>
+            <param name="stream"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .rar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Rar.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Read archive from a byte[]. The caller must close the returned file provider.
+            </summary>
+            <param name="data"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader.Tar">
+            <summary>
+            Uses <see cref="T:Lexical.FileProvider.TarFileProvider"/> to open .tar files.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Tar.Singleton">
+            <summary>
+            Static singleton instance that handles .tar extensions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Tar.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.PackageLoader.Tar.convertBackslashesToSlashes">
+            <summary>
+            Policy whether to convert '\' to '/' in the file paths that this package loader handles.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Tar.#ctor">
+            <summary>
+            Create new package loader that loads .tar files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Tar.#ctor(System.String,System.Boolean)">
+            <summary>
+            Create new package loader that loads .tar files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Tar.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Opens a .tar file with zero to multiple open file handles.
+            Is thread-safe and thread-scalable (concurrent use is possible).
+            </summary>
+            <param name="filepath"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .tar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Tar.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Reads .tar file from a stream. Takes ownership of the stream (closes it). 
+            Is thread-safe, but not thread-scalable (locks threads).
+            </summary>
+            <param name="stream"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .tar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Tar.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Read archive from a byte[]. The caller must close the returned file provider.
+            </summary>
+            <param name="data"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader._7z">
+            <summary>
+            Uses <see cref="T:Lexical.FileProvider._7zFileProvider"/> to open 7z files.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader._7z.Singleton">
+            <summary>
+            Static singleton instance that handles .7z extensions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader._7z.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.PackageLoader._7z.convertBackslashesToSlashes">
+            <summary>
+            Policy whether to convert '\' to '/' in the file paths that this package loader handles.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._7z.#ctor">
+            <summary>
+            Create new package loader that loads 7z files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._7z.#ctor(System.String,System.Boolean)">
+            <summary>
+            Create new package loader that loads 7z files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._7z.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Opens a .7z file with zero to multiple open file handles.
+            Is thread-safe and thread-scalable (concurrent use is possible).
+            </summary>
+            <param name="filename"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on 7z error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._7z.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Reads 7z file from a stream. Takes ownership of the stream (closes it). 
+            Is thread-safe, but not thread-scalable (locks threads).
+            </summary>
+            <param name="stream"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on 7z error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._7z.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Read archive from a byte[]. The caller must close the returned file provider.
+            </summary>
+            <param name="data"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader._Zip">
+            <summary>
+            Uses <see cref="T:Lexical.FileProvider._ZipFileProvider"/> to open archive file.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader._Zip.Singleton">
+            <summary>
+            Static singleton instance that handles .zip extensions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader._Zip.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.PackageLoader._Zip.convertBackslashesToSlashes">
+            <summary>
+            Policy whether to convert '\' to '/' in the file entry paths.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._Zip.#ctor">
+            <summary>
+            Create new package loader that loads rar files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._Zip.#ctor(System.String,System.Boolean)">
+            <summary>
+            Create new package loader that loads rar files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._Zip.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Opens a .zip file with zero to multiple open file handles.
+            Is thread-safe and thread-scalable (concurrent use is possible).
+            </summary>
+            <param name="filepath"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on rar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._Zip.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Reads rar file from a stream. Takes ownership of the stream (closes it). 
+            Is thread-safe, but not thread-scalable (locks threads).
+            </summary>
+            <param name="stream"></param>
+            <param name="packageInfo">(optional) clues about the file that is being opened</param>
+            <returns>file provider to the contents of the package</returns>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on rar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader._Zip.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Read archive from a byte[]. The caller must close the returned file provider.
+            </summary>
+            <param name="data"></param>
+            <param name="packageInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.RarFileProvider">
+            <summary>
+            Uses SharpCompress library to open .rar files.
+            
+            <see href="https://github.com/adamhathcock/sharpcompress"/>
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.RarFileProvider.defaultConvertBackslashesToSlashes">
+            <summary>
+            Whether to convert '\' to '/'.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.RarFileProvider.#ctor(SharpCompress.Archives.Rar.RarArchive,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create .rar content file provider.
+            </summary>
+            <param name="archive"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        </member>
+        <member name="M:Lexical.FileProvider.RarFileProvider.#ctor(System.IO.Stream,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that reads .rar content from a readable and seekable stream. 
+            
+            Note, that one file entry stream is allowed to be open at the same time. Others will wait in lock.
+            
+            Does not dispose the <paramref name="stream"/> with the file provider.
+            To dispose stream along with its file provider, construct it like this: <code>new RarFileProvider(stream).AddDisposable(stream)</code>
+            </summary>
+            <param name="stream"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .rar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.RarFileProvider.#ctor(System.Func{SharpCompress.Archives.Rar.RarArchive},System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that can reopen .rar archive for each concurrent thread.
+            </summary>
+            <param name="archiveOpener"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .rar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.RarFileProvider.#ctor(System.String,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Open .rar file for reading. Opening from a file allows concurrent reading of .rar entries.
+            </summary>
+            <param name="filepath">file name</param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">(optional) time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on .rar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.RarFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the objet.
+            </summary>
+            <param name="disposable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.RarFileProvider.AddBelatedDispose(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.TarFileProvider">
+            <summary>
+            Uses SharpCompress to open .tar files.
+            
+            <see href="https://github.com/adamhathcock/sharpcompress"/>
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.TarFileProvider.defaultConvertBackslashesToSlashes">
+            <summary>
+            Whether to convert '\' to '/'.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.TarFileProvider.#ctor(SharpCompress.Archives.Tar.TarArchive,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create tar content file provider.
+            </summary>
+            <param name="archive"></param>
+            <param name="pathHint">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        </member>
+        <member name="M:Lexical.FileProvider.TarFileProvider.#ctor(System.IO.Stream,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that reads tar content from a readable and seekable stream. 
+            
+            Note, that one file entry stream is allowed to be open at the same time. Others will wait in lock.
+            
+            Does not dispose the <paramref name="stream"/> with the file provider.
+            To dispose stream along with its file provider, construct it like this: <code>new TarFileProvider(stream).AddDisposable(stream)</code>
+            </summary>
+            <param name="stream"></param>
+            <param name="pathHint">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on tar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.TarFileProvider.#ctor(System.Func{SharpCompress.Archives.Tar.TarArchive},System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that can reopen tar archive for each concurrent thread.
+            </summary>
+            <param name="archiveOpener"></param>
+            <param name="pathHint">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on tar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.TarFileProvider.#ctor(System.String,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Open .tar file for reading. Opening from a file allows concurrent reading of tar entries.
+            </summary>
+            <param name="filename">file name</param>
+            <param name="pathHint">(optional) clue of the file that is being opened</param>
+            <param name="dateTime"></param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on tar error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.TarFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the object.
+            </summary>
+            <param name="disposable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.TarFileProvider.AddBelatedDispose(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider._7zFileProvider">
+            <summary>
+            Uses SharpCompress to open .7z files.
+            
+            <see href="https://github.com/adamhathcock/sharpcompress"/>
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider._7zFileProvider.defaultConvertBackslashesToSlashes">
+            <summary>
+            Whether to convert '\' to '/'.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider._7zFileProvider.#ctor(SharpCompress.Archives.SevenZip.SevenZipArchive,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create 7z content file provider.
+            </summary>
+            <param name="archive"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        </member>
+        <member name="M:Lexical.FileProvider._7zFileProvider.#ctor(System.IO.Stream,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that reads 7z content from a readable and seekable stream. 
+            
+            Note, that one file entry stream is allowed to be open at the same time. Others will wait in lock.
+            
+            Does not dispose the <paramref name="stream"/> with the file provider.
+            To dispose stream along with its file provider, construct it like this: <code>new SevenZipFileProvider(stream).AddDisposable(stream)</code>
+            </summary>
+            <param name="stream"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on 7z error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider._7zFileProvider.#ctor(System.Func{SharpCompress.Archives.SevenZip.SevenZipArchive},System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that can reopen 7z archive for each concurrent thread.
+            </summary>
+            <param name="archiveOpener"></param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on 7z error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider._7zFileProvider.#ctor(System.String,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Open .7z file for reading. Opening from a file allows concurrent reading of 7z entries.
+            </summary>
+            <param name="filepath">file name</param>
+            <param name="hintPath">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on 7z error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider._7zFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the object.
+            </summary>
+            <param name="disposable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider._7zFileProvider.AddBelatedDispose(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider._ZipFileProvider">
+            <summary>
+            Uses SharpCompress library to open .zip files.
+            
+            <see href="https://github.com/adamhathcock/sharpcompress"/>
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider._ZipFileProvider.defaultConvertBackslashesToSlashes">
+            <summary>
+            Whether to convert '\' to '/'.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider._ZipFileProvider.#ctor(SharpCompress.Archives.Zip.ZipArchive,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create zip content file provider.
+            </summary>
+            <param name="archive"></param>
+            <param name="pathHint">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        </member>
+        <member name="M:Lexical.FileProvider._ZipFileProvider.#ctor(System.IO.Stream,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that reads zip content from a readable and seekable stream. 
+            
+            Note, that one file entry stream is allowed to be open at the same time. Others will wait in lock.
+            
+            Does not dispose the <paramref name="stream"/> with the file provider.
+            To dispose stream along with its file provider, construct it like this: <code>new ZipFileProvider(stream).AddDisposable(stream)</code>
+            </summary>
+            <param name="stream"></param>
+            <param name="pathHint">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">Date time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on zip error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider._ZipFileProvider.#ctor(System.Func{SharpCompress.Archives.Zip.ZipArchive},System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Create file provider that can reopen zip archive for each concurrent thread.
+            </summary>
+            <param name="archiveOpener"></param>
+            <param name="pathHint">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">(optional) time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on zip error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider._ZipFileProvider.#ctor(System.String,System.String,System.Nullable{System.DateTimeOffset},System.Boolean)">
+            <summary>
+            Open .zip file for reading. Opening from a file allows concurrent reading of zip entries.
+            </summary>
+            <param name="filename">file name</param>
+            <param name="pathHint">(optional) clue of the file that is being opened</param>
+            <param name="dateTime">(optional) time for folder entries</param>
+            <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+            <exception cref="T:System.IO.IOException">On I/O error</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">on zip error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider._ZipFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the objet.
+            </summary>
+            <param name="disposable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider._ZipFileProvider.AddBelatedDispose(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

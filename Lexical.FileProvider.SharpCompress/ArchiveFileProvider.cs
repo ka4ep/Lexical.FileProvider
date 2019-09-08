@@ -54,7 +54,7 @@ namespace Lexical.FileProvider.SharpCompress.Internal
         }
 
         /// <summary>
-        /// Add <see cref="ZipArchiveEntry"/> into tree structure.
+        /// Add <paramref name="archiveEntries"/> into tree structure.
         /// </summary>
         /// <param name="root"></param>
         /// <param name="archiveEntries"></param>
@@ -186,7 +186,7 @@ namespace Lexical.FileProvider.SharpCompress.Internal
     }
 
     /// <summary>
-    /// <see cref="IStreamProvider"/> that re-opens <see cref="ZipArchive"/>s.
+    /// <see cref="IStreamProvider"/> that re-opens <see cref="IArchive"/>s.
     /// </summary>
     class ArchiveOpenerStreamProvider : Lexical.FileProvider.Common.StreamProvider
     {

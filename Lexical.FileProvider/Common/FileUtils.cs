@@ -9,6 +9,9 @@ using System.IO;
 
 namespace Lexical.FileProvider.Common
 {
+    /// <summary>
+    /// Common file and <see cref="Stream"/> utilities.
+    /// </summary>
     public class FileUtils
     {
         /// <summary>

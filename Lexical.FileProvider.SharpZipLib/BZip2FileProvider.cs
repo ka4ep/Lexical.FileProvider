@@ -91,6 +91,11 @@ namespace Lexical.FileProvider
 
         static bool _closeStream(Stream s) { s?.Dispose(); return false; }
 
+        /// <summary>
+        /// Add <paramref name="disposable"/> to be disposed along with the object.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
         public BZip2FileProvider AddDisposable(object disposable)
         {
             if (disposable is IDisposable toDispose) ((IDisposeList)this).AddDisposable(toDispose);
@@ -140,10 +145,23 @@ namespace Lexical.FileProvider
     public class BZip2StreamFix : StreamHandle
     {
         readonly long newLength;
+
+        /// <inheritdoc/>
         public override long Length => newLength;
+        /// <inheritdoc/>
         public override bool CanSeek => false;
+        /// <inheritdoc/>
         public override bool CanWrite => false;
+        /// <inheritdoc/>
         public override bool CanTimeout => false;
+        
+        /// <summary>
+        /// Create stream with <paramref name="newLength"/>.
+        /// </summary>
+        /// <param name="sourceStream"></param>
+        /// <param name="disposeHandle"></param>
+        /// <param name="disposeAction"></param>
+        /// <param name="newLength"></param>
         public BZip2StreamFix(BZip2InputStream sourceStream, IDisposable disposeHandle, Action disposeAction, long newLength) : base(sourceStream, disposeHandle, disposeAction)
         {
             this.newLength = newLength;

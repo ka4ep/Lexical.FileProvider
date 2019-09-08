@@ -8,6 +8,9 @@ using System;
 
 namespace Lexical.FileProvider.Package
 {
+    /// <summary>
+    /// Extension methods for <see cref="PackageFileProvider"/> related to evicting.
+    /// </summary>
     public static class PackageFileProviderExtensions_CacheEvict_Ext
     {
         /// <summary>

@@ -3,12 +3,17 @@
 // Date:           20.12.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.FileProvider.Common;
+using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Lexical.FileProvider.Package
 {
+    /// <summary>
+    /// <see cref="IPackageFileProvider"/> options.
+    /// </summary>
     public interface IPackageFileProviderOptions
     {
         /// <summary>
@@ -36,7 +41,7 @@ namespace Lexical.FileProvider.Package
         /// Maximum temp file size allowed.
         /// 
         /// If this value is over 0, then package provider is allowed to take complete snapshots of package files into temp files.
-        /// Note that <see cref="TempFileProvider"/> must be assigned.
+        /// Note that <see cref="ITempFileProvider"/> must be assigned.
         /// </summary>
         long MaxTempSnapshotLength { get; set; }
 
@@ -50,11 +55,14 @@ namespace Lexical.FileProvider.Package
         /// This function handles package loading errors.
         /// If the function returns true, then the error is suppressed, and package is set to <see cref="PackageState.NotPackage"/> state.
         /// If function returns false or the delegate is null, then the error is thrown and package is put to Error state.
-        /// Error may also be cached and be rethrown depending on <see cref="PackageFileProviderPolicy.ReuseFailedResult"/> policy.
+        /// Error may also be cached and be rethrown depending on <see cref="ReuseFailedResult"/> policy.
         /// </summary>
         Func<PackageEvent, bool> ErrorHandler { get; set; }
     }
 
+    /// <summary>
+    /// <see cref="IPackageFileProvider"/> extension methods.
+    /// </summary>
     public static partial class PackageFileProviderOptionExtensions
     {
         /// <summary>
@@ -77,7 +85,6 @@ namespace Lexical.FileProvider.Package
         /// 
         /// If delegate returns true, then the exception is suppressed and the 
         /// package is handled as a regular file and not opened.
-        /// <param name="errorHandler"></param>
         /// </summary>
         /// <param name="options"></param>
         /// <param name="errorHandler"></param>

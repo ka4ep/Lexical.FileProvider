@@ -14,6 +14,9 @@ using Lexical.FileProvider.Common;
 
 namespace Lexical.FileProvider
 {
+    /// <summary>
+    /// File provider that shows contents of .zip file.
+    /// </summary>
     public class ZipFileProvider : ArchiveFileProvider, IDisposableFileProvider
     {
         /// <summary>
@@ -143,7 +146,7 @@ namespace Lexical.FileProvider
         }
 
         /// <summary>
-        /// Add <paramref name="disposable"/> to be disposed along with the obejct.
+        /// Add <paramref name="disposable"/> to be disposed along with the object.
         /// 
         /// If <paramref name="disposable"/> is not <see cref="IDisposable"/>, then it's not added.
         /// </summary>

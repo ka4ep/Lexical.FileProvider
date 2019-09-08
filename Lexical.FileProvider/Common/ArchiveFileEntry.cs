@@ -24,11 +24,17 @@ namespace Lexical.FileProvider.Common
         /// </summary>
         IStreamProvider streamProvider;
 
+        /// <inheritdoc/>
         public bool Exists => true;
+        /// <inheritdoc/>
         public long Length { get; protected set; }
+        /// <inheritdoc/>
         public string Name { get; protected set; }
+        /// <inheritdoc/>
         public string PhysicalPath => null;
+        /// <inheritdoc/>
         public bool IsDirectory => false;
+        /// <inheritdoc/>
         public DateTimeOffset LastModified { get; protected set; }
 
         /// <summary>
@@ -62,6 +68,10 @@ namespace Lexical.FileProvider.Common
         public Stream CreateReadStream()
             => streamProvider.OpenStream(Identifier) ?? throw new FileNotFoundException(Identifier);
 
+        /// <summary>
+        /// Print info.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => Name;
     }

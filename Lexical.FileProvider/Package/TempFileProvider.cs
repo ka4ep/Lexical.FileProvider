@@ -47,8 +47,19 @@ namespace Lexical.FileProvider.Package
         /// </summary>
         protected readonly HashSet<string> ToDelete = new HashSet<string>();
 
+        /// <summary>
+        /// Dispose state
+        /// </summary>
         protected bool isDisposed, isDisposing;
+
+        /// <summary>
+        /// Internal lock object
+        /// </summary>
         protected readonly Object m_lock = new Object();
+
+        /// <summary>
+        /// On disposed callback delegate.
+        /// </summary>
         protected readonly HandleDisposedFunc handleDisposedFunc;
 
         /// <summary>
@@ -236,6 +247,9 @@ namespace Lexical.FileProvider.Package
             lock (m_lock) foreach (string filename in deleted) ToDelete.Remove(filename);
         }
 
+        /// <summary>
+        /// Dispose temp files provider.
+        /// </summary>
         public virtual void Dispose()
         {
             // Singleton instance is not disposed. 
@@ -252,6 +266,10 @@ namespace Lexical.FileProvider.Package
             }
         }
 
+        /// <summary>
+        /// Print info.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}(Directory={this.directory}, Prefix={this.prefix}, Suffix={this.suffix})";
     }
@@ -279,6 +297,7 @@ namespace Lexical.FileProvider.Package
         /// Create new temp file handle.
         /// </summary>
         /// <param name="filename">full file path to temp file</param>
+        /// <param name="deleteAction">on delete callback delegate</param>
         public TempFileHandle(string filename, TempFileProvider.HandleDisposedFunc deleteAction)
         {
             this.Filename = filename ?? throw new ArgumentNullException(nameof(filename));

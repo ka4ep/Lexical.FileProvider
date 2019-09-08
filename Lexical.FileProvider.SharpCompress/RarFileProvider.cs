@@ -64,11 +64,17 @@ namespace Lexical.FileProvider
         /// </summary>
         /// <param name="filepath">file name</param>
         /// <param name="hintPath">(optional) clue of the file that is being opened</param>
+        /// <param name="dateTime">(optional) time for folder entries</param>
         /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
         /// <exception cref="IOException">On I/O error</exception>
         /// <exception cref="PackageException.LoadError">on .rar error</exception>
         public RarFileProvider(string filepath, String hintPath = null, DateTimeOffset? dateTime = default, bool convertBackslashesToSlashes = defaultConvertBackslashesToSlashes) : base(()=>RarArchive.Open(filepath), hintPath, dateTime??File.GetLastWriteTimeUtc(filepath), convertBackslashesToSlashes) { }
 
+        /// <summary>
+        /// Add <paramref name="disposable"/> to be disposed along with the objet.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
         public RarFileProvider AddDisposable(object disposable)
         {
             if (disposable is IDisposable toDispose) ((IDisposeList)this).AddDisposable(toDispose);

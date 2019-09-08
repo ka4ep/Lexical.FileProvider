@@ -14,11 +14,38 @@ namespace Lexical.FileProvider.Package
     /// </summary>
     public class PackageFileProviderOptions : IPackageFileProviderOptions, ICloneable
     {
+        /// <summary>
+        /// Default value for maximum length of a package file to read into RAM memory.
+        /// </summary>
         public const long DefaultMaxMemorySnapshotLength = 1024 * 1024 * 1024;
+
+        /// <summary>
+        /// Default value for maximum length of a temporary file.
+        /// </summary>
         public const long DefaultMaxTempSnapshotLength = long.MaxValue;
+
+        /// <summary>
+        /// Default array of package loaders.
+        /// </summary>
         public static readonly IPackageLoader[] DefaultPackageLoaders = new IPackageLoader[0];
+
+        /// <summary>
+        /// Default error handler.
+        /// </summary>
         public static readonly Func<PackageEvent, bool> DefaultErrorHandler = pe => pe.LoadError is PackageException.NoSuitableLoadCapability || pe.LoadError is BadImageFormatException;
+
+        /// <summary>
+        /// Default policy for whether to allow to keep files open.
+        /// 
+        /// If false, then files are copied into memory or temp-file snapshots.
+        /// </summary>
         public const bool DefaultAllowOpenFiles = true;
+
+        /// <summary>
+        /// Default policy for whether to reuse previous error results.
+        /// 
+        /// If true, caches exceptions. If false, retries on every new read attempt.
+        /// </summary>
         public const bool DefaultReuseFailedResult = true;
 
         bool allowOpenFiles = DefaultAllowOpenFiles;
@@ -132,14 +159,25 @@ namespace Lexical.FileProvider.Package
                 .SetErrorHandler(ops.ErrorHandler)
                 .SetPackageLoaders(ops.PackageLoaders);
 
+        /// <summary>
+        /// Make copy
+        /// </summary>
+        /// <returns></returns>
         public virtual object Clone()
             => CopyFrom(this);
 
+        /// <summary>
+        /// Print info
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{nameof(IPackageFileProviderOptions)}({nameof(AllowOpenFiles)}={AllowOpenFiles}, {nameof(ReuseFailedResult)}={ReuseFailedResult}, {nameof(PackageLoaders)}=[{String.Join(", ", PackageLoaders)}], {nameof(MaxMemorySnapshotLength)}={MaxTempSnapshotLength}, {nameof(MaxTempSnapshotLength)}={MaxTempSnapshotLength})";
 
     }
 
+    /// <summary>
+    /// <see cref="IPackageFileProviderOptions"/> extension methods.
+    /// </summary>
     public static partial class PackageFileProviderOptionExtensions_
     {
         /// <summary>

@@ -35,6 +35,12 @@ namespace Lexical.FileProvider.Package
         /// </summary>
         public static readonly Regex InvalidPathPattern = new Regex($"[{Regex.Escape(new String(Path.GetInvalidPathChars().Where(c=>c!='%').ToArray()))}]", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+        /// <summary>
+        /// Validate <paramref name="options"/>.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="options"></param>
+        /// <returns><see cref="ValidateOptionsResult.Success"/> if options are valid</returns>
         public ValidateOptionsResult Validate(string name, TempFileProviderOptions options)
         {
             List<string> failMessages = null;

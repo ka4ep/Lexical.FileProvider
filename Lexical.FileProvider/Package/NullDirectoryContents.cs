@@ -30,17 +30,28 @@ namespace Lexical.FileProvider.Package
         IFileInfo RootFileInfo => rootFileInfo ?? (rootFileInfo = packageProvider.FileProvider.GetFileInfo(null));
         IDirectoryContents RootDir => rootDir ?? (rootDir = packageProvider.FileProvider.GetDirectoryContents(null));
 
+        /// <summary>
+        /// Create contents
+        /// </summary>
+        /// <param name="packageProvider"></param>
         public NullDirectoryContents(PackageFileProvider packageProvider)
         {
             this.packageProvider = packageProvider ?? throw new ArgumentNullException(nameof(packageProvider));
         }
 
+        /// <inheritdoc/>
         public bool Exists => RootFileInfo.Exists;
+        /// <inheritdoc/>
         public long Length => RootFileInfo.Length;
+        /// <inheritdoc/>
         public string PhysicalPath => rootFileInfo.PhysicalPath;
+        /// <inheritdoc/>
         public string Name => RootFileInfo.Name;
+        /// <inheritdoc/>
         public DateTimeOffset LastModified => RootFileInfo.LastModified;
+        /// <inheritdoc/>
         public bool IsDirectory => RootFileInfo.IsDirectory;
+        /// <inheritdoc/>
         public Stream CreateReadStream() => RootFileInfo.CreateReadStream();
         IFileInfo[] GetFiles()
         {
@@ -66,6 +77,8 @@ namespace Lexical.FileProvider.Package
             }
             return files;
         }
+
+        /// <inheritdoc/>
         public IEnumerator<IFileInfo> GetEnumerator()
             => ((IEnumerable<IFileInfo>)GetFiles()).GetEnumerator();
 

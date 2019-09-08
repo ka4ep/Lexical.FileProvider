@@ -30,7 +30,7 @@ namespace Lexical.FileProvider.Package
         /// The file extension(s) this format can open.
         /// 
         /// The string is a regular expression. 
-        /// For example "\.zip" or "\.zip|\.7z|\tar.gz"
+        /// For example "\.zip" or "\.zip|\.7z|\.tar\.gz"
         /// 
         /// Pattern will be used as case insensitive, so the case doesn't matter, but lower is preferred.
         /// 
@@ -185,6 +185,9 @@ namespace Lexical.FileProvider.Package
     }
     // </IPackageLoadInfo>
 
+    /// <summary>
+    /// <see cref="IPackageLoader"/> extension methods.
+    /// </summary>
     public static class PackageLoaderExtensions
     {
         /// <summary>

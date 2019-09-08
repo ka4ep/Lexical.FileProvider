@@ -7,6 +7,9 @@ using System.IO;
 
 namespace Lexical.FileProvider.Common
 {
+    /// <summary>
+    /// Opens a <see cref="Stream"/> for a file entry.
+    /// </summary>
     public interface IStreamProvider
     {
         /// <summary>

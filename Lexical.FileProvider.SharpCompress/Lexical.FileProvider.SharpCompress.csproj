@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.3</LangVersion>
     <Description>Wraps SharpCompress into IFileProvider and IPackageLoader. Supports formats .zip, .7z, .rar, .tar, .gz recursively. See: https://github.com/adamhathcock/sharpcompress</Description>
-    <Version>0.13.4</Version>
+    <Version>0.13.5</Version>
     <Authors>Toni Kalajainen</Authors>
     <Company>Lexical</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

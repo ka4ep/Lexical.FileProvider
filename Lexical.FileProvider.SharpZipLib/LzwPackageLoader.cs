@@ -17,7 +17,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// </summary>
     public class Lzw : IPackageLoaderOpenFile, IPackageLoaderUseBytes
     {
-        private static Lzw singleton = new Lzw();
+        private static readonly Lzw singleton = new Lzw();
 
         /// <summary>
         /// Static singleton instance that handles .Lzw extensions.

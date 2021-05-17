@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Version>0.14.1</Version>
@@ -23,6 +23,12 @@ For example: "somefile.zip/my.dll/my.embedded.resources"</Description>
     <DocumentationFile>N:\Lexical\FileProvider.GitHub\Lexical.FileProvider\Lexical.FileProvider.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>N:\Projects\Segue\src\Lexical\Lexical.FileProvider\Lexical.FileProvider\Lexical.FileProvider.xml</DocumentationFile>
+    <OutputPath>N:\Projects\Segue\src\Lexical\Lexical.FileProvider\Build.Release\</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\LICENSE" Link="LICENSE">
       <PackagePath></PackagePath>
@@ -31,13 +37,13 @@ For example: "somefile.zip/my.dll/my.embedded.resources"</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.2.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.2.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="5.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="5.0.5" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

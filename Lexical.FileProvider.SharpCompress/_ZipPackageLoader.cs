@@ -16,7 +16,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// </summary>
     public class _Zip : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
-        private static _Zip singleton = new _Zip();
+        private static readonly _Zip singleton = new _Zip();
 
         /// <summary>
         /// Static singleton instance that handles .zip extensions.
@@ -31,15 +31,15 @@ namespace Lexical.FileProvider.PackageLoader
         /// <summary>
         /// Policy whether to convert '\' to '/' in the file entry paths.
         /// </summary>
-        bool convertBackslashesToSlashes;
+        private readonly bool convertBackslashesToSlashes;
 
         /// <summary>
-        /// Create new package loader that loads rar files.
+        /// Create new package loader that loads zip files.
         /// </summary>
         public _Zip() : this(@"\.zip") { }
 
         /// <summary>
-        /// Create new package loader that loads rar files.
+        /// Create new package loader that loads zip files.
         /// </summary>
         /// <param name="fileExtensionPattern">regular expression pattern</param>
         /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
@@ -57,7 +57,7 @@ namespace Lexical.FileProvider.PackageLoader
         /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
         /// <returns>file provider to the contents of the package</returns>
         /// <exception cref="IOException">On I/O error</exception>
-        /// <exception cref="PackageException.LoadError">on rar error</exception>
+        /// <exception cref="PackageException.LoadError">on zip error</exception>
         public IFileProvider OpenFile(string filepath, IPackageLoadInfo packageInfo)
         {
             try
@@ -71,14 +71,14 @@ namespace Lexical.FileProvider.PackageLoader
         }
 
         /// <summary>
-        /// Reads rar file from a stream. Takes ownership of the stream (closes it). 
+        /// Reads zip file from a stream. Takes ownership of the stream (closes it). 
         /// Is thread-safe, but not thread-scalable (locks threads).
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
         /// <returns>file provider to the contents of the package</returns>
         /// <exception cref="IOException">On I/O error</exception>
-        /// <exception cref="PackageException.LoadError">on rar error</exception>
+        /// <exception cref="PackageException.LoadError">on zip error</exception>
         public IFileProvider UseStream(Stream stream, IPackageLoadInfo packageInfo)
         {
             try
@@ -101,7 +101,7 @@ namespace Lexical.FileProvider.PackageLoader
         {
             try
             {
-                Func<ZipArchive> opener = () => ZipArchive.Open(new MemoryStream(data));
+                ZipArchive opener() => ZipArchive.Open(new MemoryStream(data));
                 return new _ZipFileProvider(opener, packageInfo?.Path, packageInfo?.LastModified);
             }
             catch (Exception e) when (e is InvalidDataException || e is FormatException || e is BadImageFormatException)

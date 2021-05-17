@@ -33,17 +33,16 @@ namespace Lexical.FileProvider
             // Mutable long, and object to take closure reference to.
             long[] lengthContainer = new long[] { -1 };
 
-            Func<Stream> opener = () =>
+            Stream opener()
             {
                 FileStream fs = new FileStream(filepath, FileMode.Open, FileAccess.Read);
                 try
                 {
-                    BZip2InputStream bzis = new BZip2InputStream(fs);
-                    bzis.IsStreamOwner = true;
-                    return lengthContainer[0] < 0L ? bzis : (Stream) new BZip2StreamFix(bzis, null, null, lengthContainer[0]);
+                    BZip2InputStream bzis = new BZip2InputStream(fs) { IsStreamOwner = true };
+                    return lengthContainer[0] < 0L ? bzis : (Stream)new BZip2StreamFix(bzis, null, null, lengthContainer[0]);
                 }
                 catch (Exception) when (_closeStream(fs)) { throw new IOException($"Failed to read .bzip2 from {filepath}"); }
-            };
+            }
 
             // Calculate length by reading the whole thing.
             lengthContainer[0] = CalculateLength(opener);
@@ -70,17 +69,16 @@ namespace Lexical.FileProvider
             // Mutable long, and object to take closure reference to.
             long[] lengthContainer = new long[] { -1 };
 
-            Func<Stream> opener = () =>
+            Stream opener()
             {
                 MemoryStream ms = new MemoryStream(data);
                 try
                 {
-                    BZip2InputStream bzis = new BZip2InputStream(ms);
-                    bzis.IsStreamOwner = true;
+                    BZip2InputStream bzis = new BZip2InputStream(ms) { IsStreamOwner = true };
                     return lengthContainer[0] < 0L ? bzis : (Stream)new BZip2StreamFix(bzis, null, null, lengthContainer[0]);
                 }
                 catch (Exception) when (_closeStream(ms)) { throw new IOException($"Failed to read .bzip2 from byte[]"); }
-            };
+            }
 
             // Calculate length by reading the whole thing.
             lengthContainer[0] = CalculateLength(opener);

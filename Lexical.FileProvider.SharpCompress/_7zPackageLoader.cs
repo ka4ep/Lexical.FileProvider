@@ -16,7 +16,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// </summary>
     public class _7z : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
-        private static _7z singleton = new _7z();
+        private static readonly _7z singleton = new _7z();
 
         /// <summary>
         /// Static singleton instance that handles .7z extensions.
@@ -31,7 +31,7 @@ namespace Lexical.FileProvider.PackageLoader
         /// <summary>
         /// Policy whether to convert '\' to '/' in the file paths that this package loader handles.
         /// </summary>
-        bool convertBackslashesToSlashes;
+        private readonly bool convertBackslashesToSlashes;
 
         /// <summary>
         /// Create new package loader that loads 7z files.
@@ -102,7 +102,7 @@ namespace Lexical.FileProvider.PackageLoader
         {
             try
             {
-                Func<SevenZipArchive> opener = () => SevenZipArchive.Open(new MemoryStream(data));
+                SevenZipArchive opener() => SevenZipArchive.Open(new MemoryStream(data));
                 return new _7zFileProvider(opener, packageInfo?.Path, packageInfo?.LastModified);
             }
             catch (Exception e) when (e is InvalidDataException || e is FormatException || e is BadImageFormatException)

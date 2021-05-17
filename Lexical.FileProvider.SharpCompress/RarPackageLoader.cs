@@ -16,7 +16,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// </summary>
     public class Rar : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
-        private static Rar singleton = new Rar(@"\.rar", true);
+        private static readonly Rar singleton = new Rar(@"\.rar", true);
 
         /// <summary>
         /// Static singleton instance that handles .rar extensions.
@@ -31,7 +31,7 @@ namespace Lexical.FileProvider.PackageLoader
         /// <summary>
         /// Policy whether to convert '\' to '/' in the file paths that this package loader handles.
         /// </summary>
-        bool convertBackslashesToSlashes;
+        private readonly bool convertBackslashesToSlashes;
 
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Lexical.FileProvider.PackageLoader
         {
             try
             {
-                Func<RarArchive> opener = () => RarArchive.Open(new MemoryStream(data));
+                RarArchive opener() => RarArchive.Open(new MemoryStream(data));
                 return new RarFileProvider(opener, packageInfo?.Path, packageInfo?.LastModified);
             }
             catch (Exception e) when (e is InvalidDataException || e is FormatException || e is BadImageFormatException)

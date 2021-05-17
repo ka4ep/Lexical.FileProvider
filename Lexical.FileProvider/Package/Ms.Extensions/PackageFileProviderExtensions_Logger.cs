@@ -132,7 +132,7 @@ namespace Lexical.FileProvider.Package
         /// </summary>
         /// <param name="value"></param>
         public void OnNext(PackageEvent value)
-        {
+        {            
             int id = Interlocked.Increment(ref eventId);
             switch(value.NewState)
             {
@@ -152,3 +152,5 @@ namespace Lexical.FileProvider.Package
         }
     }
 }
+
+

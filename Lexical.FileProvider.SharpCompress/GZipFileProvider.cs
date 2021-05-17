@@ -57,7 +57,7 @@ namespace Lexical.FileProvider
             // Place holder for the uncompressed length value
             long[] length = new long[1];
             // Convert archiveOpener to streamOpener
-            Func<Stream> streamOpener = () =>
+            Stream streamOpener()
             {
                 IArchive archive = archiveOpener();
                 try
@@ -76,7 +76,7 @@ namespace Lexical.FileProvider
                     // Never goes here
                     return null;
                 }
-            };
+            }
 
             // Create stream provider
             this.streamProvider = new StreamOpener(streamOpener, entryName, belatedDisposeList);
@@ -152,7 +152,9 @@ namespace Lexical.FileProvider
         /// </summary>
         /// <param name="opener"></param>
         /// <returns></returns>
+#pragma warning disable IDE0051 // Remove unused private members
         static long CalculateLength(Func<Stream> opener)
+#pragma warning restore IDE0051 // Remove unused private members
         {
             using (Stream s = opener())
                 return CalculateLength(s);

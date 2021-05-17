@@ -1,0 +1,854 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lexical.FileProvider.Abstractions</name>
+    </assembly>
+    <members>
+        <member name="T:Lexical.FileProvider.Common.IDisposableFileProvider">
+            <summary>
+            Combination of two interfaces so that they can be returned from methods.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.IBelatedDisposeFileProvider">
+            <summary>
+            Interface for fileprovider that allow delayed disposable to be attached.
+            Delayed disposable is called once the fileprovider is disposed, and all its open streams are closed.
+            
+            The dispose process goes as following: 
+            
+                Once disposed is called, the file provider goes to disposed state.
+                No new streams can be opened. However, there may be open streams.
+                Once all open streams are closed, then belated disposes are called.
+            
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IBelatedDisposeFileProvider.AddBelatedDispose(System.IDisposable)">
+            <summary>
+            Add <paramref name="disposable"/> that is to be disposed after fileprovider is disposed and all streams are closed.
+            
+            If the implementing object has already been disposed, this method immediately disposes the <paramref name="disposable"/>.
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if was added to list, false if wasn't but was disposed immediately</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IBelatedDisposeFileProvider.AddBelatedDisposes(System.Collections.Generic.IEnumerable{System.IDisposable})">
+            <summary>
+            Add <paramref name="disposables"/> that are to be disposed after fileprovider is disposed and all streams are closed
+            
+            If the implementing object has already been disposed, this method immediately disposes the <paramref name="disposables"/>.
+            </summary>
+            <param name="disposables"></param>
+            <returns>true if were added to list, false if were disposed immediately</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IBelatedDisposeFileProvider.RemoveBelatedDispose(System.IDisposable)">
+            <summary>
+            Remove <paramref name="disposable"/> from the list. 
+            </summary>
+            <param name="disposable"></param>
+            <returns>true if was removed, false if it wasn't in the list.</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.IBelatedDisposeFileProvider.RemoveBelatedDisposes(System.Collections.Generic.IEnumerable{System.IDisposable})">
+            <summary>
+            Remove <paramref name="disposables"/> from the list. 
+            </summary>
+            <param name="disposables"></param>
+            <returns>true if was removed, false if it wasn't in the list.</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.ITempFileProvider">
+            <summary>
+            Temporary file provider.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.ITempFileProvider.CreateTempFile">
+            <summary>
+            Create a new unique 0-bytes temp file that is not locked.
+            </summary>
+            <exception cref="T:System.IO.IOException">if file creation failed</exception>
+            <exception cref="T:System.ObjectDisposedException">if provider is disposed</exception>
+            <returns>handle with a filename. Caller must dispose after use, which will delete the file if it still exists.</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.ITempFileHandle">
+            <summary>
+            A handle to a temp file name. 
+            
+            Dispose the handle to delete it.
+            
+            If temp file is locked, Dispose() throws an <see cref="T:System.IO.IOException"/>.
+            
+            Failed deletion will still be marked as to-be-deleted.
+            There is another delete attempt when the parent <see cref="T:Lexical.FileProvider.Common.ITempFileProvider"/> is disposed.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.ITempFileHandle.Filename">
+            <summary>
+            Filename to 0 bytes temp file.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.TempFileProviderExtensions">
+            <summary>
+            <see cref="T:Lexical.FileProvider.Common.ITempFileHandle"/> extension methods.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.TempFileProviderExtensions.DisposeSuppressIOException(Lexical.FileProvider.Common.ITempFileHandle)">
+            <summary>
+            Alternative Dispose() that suppresses <see cref="T:System.IO.IOException"/>.
+            </summary>
+            <param name="handle"></param>
+        </member>
+        <member name="T:Lexical.FileProvider.Common.TempFileProviderOptions">
+            <summary>
+            Options for configuring <see cref="T:Lexical.FileProvider.Common.ITempFileProvider"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.TempFileProviderOptions.Directory">
+            <summary>
+            Directory to use temp files. Use slash '/' as directory separator for maximum compability.
+            
+            If directory contains environment variables, such as "%tmp%", then they will be opened.
+            If %tmp% environment variable is not found, then the <see cref="T:Lexical.FileProvider.Common.ITempFileProvider"/> implemntation 
+            will use replace %tmp% with value from <see cref="M:System.IO.Path.GetTempPath"/>.
+            
+            If value is null, then the <see cref="T:Lexical.FileProvider.Common.ITempFileProvider"/> implemntation will use <see cref="M:System.IO.Path.GetTempPath"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.TempFileProviderOptions.Prefix">
+            <summary>
+            Prefix to use to append before file names.
+            
+            If null then "" is used.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Common.TempFileProviderOptions.Suffix">
+            <summary>
+            Suffix to use to append after file names. For example ".tmp"
+            
+            If null then "" is used.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.TempFileProviderOptions.ReadFrom(Lexical.FileProvider.Common.TempFileProviderOptions)">
+            <summary>
+            Copy settings from <paramref name="src"/>.
+            </summary>
+            <param name="src"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.TempFileProviderOptions.GetHashCode">
+            <summary>
+            Calculate hashcode.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.TempFileProviderOptions.Equals(System.Object)">
+            <summary>
+            Compare equal contents.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.TempFileProviderOptions.Compare(System.Object,System.Object)">
+            <summary>
+            Equal content comparison that approves nulls and considers two nulls are equal.
+            </summary>
+            <param name="a">(optional)</param>
+            <param name="b">(optional)</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.TempFileProviderOptions.Clone">
+            <summary>
+            Create a copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Common.TempFileProviderOptions.ToString">
+            <summary>
+            Print info.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IObservablePackageFileProvider">
+            <summary>
+            Interface for monitoring package file provider.
+            
+            This interface is used for attaching logging and cache eviction mechanism.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.IObservablePackageFileProvider.GetPackageInfos">
+            <summary>
+            Get a snapshot cached packages infos. 
+            This includes loaded packages, and packages whose loading has failed and failure info is still cached.
+            </summary>
+            <returns>a snapshot array of snapshot entries</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.IObservablePackageFileProvider.GetPackageInfo(System.String)">
+            <summary>
+            Get a handle to package info.
+            </summary>
+            <param name="filepath"></param>
+            <returns>package info or null</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.IObservablePackageFileProvider.Evict(System.String)">
+            <summary>
+            Try to evict a package from cache.
+            
+            It won't evict if it is locked by an open handle.
+            </summary>
+            <param name="filepath"></param>
+            <returns>true if packge is no longer loaded, or didn't exist. false if package remains loaded.</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageState">
+            <summary>
+            Package state
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageState.NotOpened">
+            <summary>
+            Package has not yet been opened.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageState.Opened">
+            <summary>
+            Package has been opened
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageState.Error">
+            <summary>
+            Opening package resulted an error. Error state is cached and rethrown.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageState.NotPackage">
+            <summary>
+            File entry is not a package. 
+            This state is set if file doesn't exist, is a directory, or is not a package (exception was suppressed).
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageState.Evicted">
+            <summary>
+            Package entry is evicted, closed or disposed.
+            
+            This is final state from which it will not change to any other state.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageEvent">
+            <summary>
+            Package load event.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageEvent.FilePath">
+            <summary>
+            Path to package file.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageEvent.FileProvider">
+            <summary>
+            Package file provider
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageEvent.OldState">
+            <summary>
+            Previous state
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageEvent.NewState">
+            <summary>
+            New state
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageEvent.EventTime">
+            <summary>
+            The time event occured
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageEvent.LoadError">
+            <summary>
+            (optional) Error
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageEvent.ToString">
+            <summary>
+            Print info.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageInfo">
+            <summary>
+            Information about load state of a package.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageInfo.State">
+            <summary>
+            State of the package
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageInfo.FilePath">
+            <summary>
+            Filepath of the package file, also its identifier.
+            
+            If might be in canonilized format "c:\temp\file.zip/somedata.dll/somedata.resources" -> "c:/temp/file.zip/somedata.dll/somedata.resources"
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageInfo.LoadTime">
+            <summary>
+            Time when package was load was attempted.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageInfo.LastAccessTime">
+            <summary>
+            Time when package was last accessed.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageInfo.LoadError">
+            <summary>
+            Error that occured when loading package
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageInfo.Length">
+            <summary>
+            Estimation of memory allocation.
+            
+            If package is opened or streamed from a file, the estimation is lowered.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IPackageFileProvider">
+            <summary>
+            File provider that can open package files recursively.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageFileProvider.Options">
+            <summary>
+            File provider options. 
+            
+            Options are general and can be shared with multiple file provider instances.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageFileProvider.TempFileProvider">
+            <summary>
+            Temp file provider
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageFileProviderExtensions">
+            <summary>
+            <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> extension methods.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions.SetOptions(Lexical.FileProvider.Package.IPackageFileProvider,Lexical.FileProvider.Package.IPackageFileProviderOptions)">
+            <summary>
+            Assign options and return <paramref name="fileProvider"/>.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="options"></param>
+            <returns>fileProvider</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions.SetOptions(Lexical.FileProvider.Package.IPackageFileProvider,Lexical.FileProvider.Common.ITempFileProvider)">
+            <summary>
+            Assign <paramref name="tempFileProvider"/> and return <paramref name="fileProvider"/>.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="tempFileProvider"></param>
+            <returns>fileProvider</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderExtensions.SetTempFileProvider(Lexical.FileProvider.Package.IPackageFileProvider,Lexical.FileProvider.Common.ITempFileProvider)">
+            <summary>
+            Set maximum memory temp file snapshot length. If value is over 0, then temp file snapshots are allowed.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="tempFileProvider"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IPackageFileProviderOptions">
+            <summary>
+            <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> options.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageFileProviderOptions.AllowOpenFiles">
+            <summary>
+            Permission to allow to open package files and keep their file handles open.
+            Open handle can be to a physical file, or to a file entry in a parent package.
+            
+            Note, that when packet is opened with open stream, it might not be accessible
+            concurrently if the parent is another open stream.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageFileProviderOptions.ReuseFailedResult">
+            <summary>
+            If package opening failed, the reason of the failure can be cached and rethrown 
+            without new attempt on every method call.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageFileProviderOptions.MaxMemorySnapshotLength">
+            <summary>
+            Maximum length of memory snapshots.
+            If this value is over 0, then package provider is allowed to take complete snapshots of package files into memory.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageFileProviderOptions.MaxTempSnapshotLength">
+            <summary>
+            Maximum temp file size allowed.
+            
+            If this value is over 0, then package provider is allowed to take complete snapshots of package files into temp files.
+            Note that <see cref="T:Lexical.FileProvider.Common.ITempFileProvider"/> must be assigned.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageFileProviderOptions.PackageLoaders">
+            <summary>
+            Enumeration of package loaders. 
+            Assigning a new reference updates the package loaders on the package file provider.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageFileProviderOptions.ErrorHandler">
+            <summary>
+            This function handles package loading errors.
+            If the function returns true, then the error is suppressed, and package is set to <see cref="F:Lexical.FileProvider.Package.PackageState.NotPackage"/> state.
+            If function returns false or the delegate is null, then the error is thrown and package is put to Error state.
+            Error may also be cached and be rethrown depending on <see cref="P:Lexical.FileProvider.Package.IPackageFileProviderOptions.ReuseFailedResult"/> policy.
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions">
+            <summary>
+            <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> extension methods.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.ConfigureOptions(Lexical.FileProvider.Package.IPackageFileProvider,System.Action{Lexical.FileProvider.Package.IPackageFileProviderOptions})">
+            <summary>
+            Configure options.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="configure"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.SetErrorHandler(Lexical.FileProvider.Package.IPackageFileProviderOptions,System.Func{Lexical.FileProvider.Package.PackageEvent,System.Boolean})">
+            <summary>
+            Assign package loading error handler. Logging can be added here.
+            
+            Set this delegate to null to let exception be thrown to caller. 
+            Usually when handling <see cref="T:Microsoft.Extensions.FileProviders.IFileInfo"/> or <see cref="T:Microsoft.Extensions.FileProviders.IDirectoryContents"/>.
+            
+            If delegate returns true, then the exception is suppressed and the 
+            package is handled as a regular file and not opened.
+            </summary>
+            <param name="options"></param>
+            <param name="errorHandler"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.SetToSuppressErrors(Lexical.FileProvider.Package.IPackageFileProviderOptions)">
+            <summary>
+            Configure package file provider to suppress package loading errors.
+            When package loading fails and error is suppressed, then the file is treated as it is normal non-package file.
+            </summary>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.SetToThrowErrors(Lexical.FileProvider.Package.IPackageFileProviderOptions)">
+            <summary>
+            Configure file provider to let package loading errors be thrown.
+            </summary>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.SetPackageLoaders(Lexical.FileProvider.Package.IPackageFileProviderOptions,System.Collections.Generic.IEnumerable{Lexical.FileProvider.Package.IPackageLoader})">
+            <summary>
+            Assign new set of package loaders.
+            
+            <param name="options"></param>
+            <param name="packageLoaders"></param>
+            </summary>
+            <returns>file provider</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.AddPackageLoader(Lexical.FileProvider.Package.IPackageFileProviderOptions,Lexical.FileProvider.Package.IPackageLoader)">
+            <summary>
+            Add package loader.
+            </summary>
+            <param name="options"></param>
+            <param name="loader"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.AddPackageLoaders(Lexical.FileProvider.Package.IPackageFileProviderOptions,System.Collections.Generic.IEnumerable{Lexical.FileProvider.Package.IPackageLoader})">
+            <summary>
+            Add package loaders.
+            </summary>
+            <param name="options"></param>
+            <param name="loaders"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.AddPackageLoaders(Lexical.FileProvider.Package.IPackageFileProviderOptions,Lexical.FileProvider.Package.IPackageLoader[])">
+            <summary>
+            Add package loaders.
+            </summary>
+            <param name="options"></param>
+            <param name="loaders"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.SetMemorySnapshotLength(Lexical.FileProvider.Package.IPackageFileProviderOptions,System.Int64)">
+            <summary>
+            Set maximum memory snapshot length. If value is over 0, then memory snapshots are allowed.
+            </summary>
+            <param name="options"></param>
+            <param name="maxMemorySnapshotLength"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.SetTempFileSnapshotLength(Lexical.FileProvider.Package.IPackageFileProviderOptions,System.Int64)">
+            <summary>
+            Set maximum memory temp file snapshot length. If value is over 0, then temp file snapshots are allowed.
+            
+            Note, that the options must be configured with TempProvider for temp files to work. 
+            </summary>
+            <param name="options"></param>
+            <param name="maxTempFileSnapshotLength"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.SetAllowOpenFiles(Lexical.FileProvider.Package.IPackageFileProviderOptions,System.Boolean)">
+            <summary>
+            Set policy whether open files is allowed or not.
+            
+            If open files is allowed, then <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> can keep open files
+            and keep them open for prolonged time. 
+            
+            If the policy is disallowed, then the <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> will open files
+            only to make snapshot copies of them.
+            </summary>
+            <param name="options"></param>
+            <param name="allowOpenFiles"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageFileProviderOptionExtensions.SetReuseFailedResult(Lexical.FileProvider.Package.IPackageFileProviderOptions,System.Boolean)">
+            <summary>
+            Set policy whether to cache and reuse failed open package attempt.
+            
+            If this policy is allowed, then <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> remembers what package files 
+            could not be opened. Error result can be evicted just like other cached info.
+            
+            If this policy is disallowed, then <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider"/> will retry opening packages
+            if they are requested again, even if they had failed previously.
+            </summary>
+            <param name="options"></param>
+            <param name="reuseFailedResult"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IPackageLoader">
+            <summary>
+            Interace for loaders that read package files, such as .zip, as <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/>s.
+            
+            The implementing class must implement one or more of the following sub-interfaces:
+            <list type="bullet">
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderOpenFile"/></item>
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderLoadFile"/></item>
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderUseStream"/></item>
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderLoadFromStream"/></item>
+               <item><see cref="T:Lexical.FileProvider.Package.IPackageLoaderUseBytes"/></item>
+            </list>
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageLoader.FileExtensionPattern">
+            <summary>
+            The file extension(s) this format can open.
+            
+            The string is a regular expression. 
+            For example "\.zip" or "\.zip|\.7z|\.tar\.gz"
+            
+            Pattern will be used as case insensitive, so the case doesn't matter, but lower is preferred.
+            
+            Do not add named groups. For example "(?&lt;name&gt;..)".
+            
+            Unnamed groups are, however, allowed. For example: "\.zip(\.tmp)?"
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderOpenFile">
+            <summary>
+            Package loader that can open a package file as <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderOpenFile.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Open a package file and keep it open until the file provider is disposed. 
+            Return <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> that represents the contents of the open file.
+            
+            The caller is responsible for disposing the returned file provider if it implements <see cref="T:System.IDisposable"/>.
+            </summary>
+            <param name="filepath">data to read from</param>
+            <param name="packageInfo">(optional) Information about packge that is being opened</param>
+            <returns>file provider</returns>
+            <exception cref="T:System.Exception">If there was unexpected error, such as IOException</exception>
+            <exception cref="T:System.InvalidOperationException">If this load method is not supported.</exception>
+            <exception cref="T:System.IO.IOException">Problem with io stream</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderLoadFile">
+            <summary>
+            Package loader that cab load a package file completely.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderLoadFile.LoadFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Load a package file completely. The implementation must close the file before the call returns.
+            Return <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> that represents the contents of the open file.
+            
+            The caller is responsible for disposing the returned file provider if it implements <see cref="T:System.IDisposable"/>.
+            </summary>
+            <param name="filepath">data to read from</param>
+            <param name="packageInfo">(optional) Information about packge that is being opened</param>
+            <returns>file provider</returns>
+            <exception cref="T:System.Exception">If there was unexpected error, such as IOException</exception>
+            <exception cref="T:System.InvalidOperationException">If this load method is not supported.</exception>
+            <exception cref="T:System.IO.IOException">Problem with io stream</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderUseStream">
+            <summary>
+            Package loader that can open <see cref="T:System.IO.Stream"/> to access contents of a package file.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderUseStream.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Use an open <paramref name="stream"/> to read contents from a package file.
+            Return a <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> that represent the contents.
+            
+            The returned file provider takes ownership of the stream, and must close the <paramref name="stream"/> along with the provider.
+            
+            <paramref name="stream"/> must be readable and seekable, <see cref="P:System.IO.Stream.CanSeek"/> must be true.
+            
+            The caller is responsible for disposing the returned file provider if it implements <see cref="T:System.IDisposable"/>.
+            
+            Note, open stream cannot be read concurrently from two threads and must be locked with mutually exclusive lock if two reads attempted.
+            </summary>
+            <param name="stream">stream to read data from. Stream must be disposed along with the returned file provider.</param>
+            <param name="packageInfo">(optional) Information about packge that is being opened</param>
+            <returns>file provider that can be disposable</returns>
+            <exception cref="T:System.Exception">If there was unexpected error, such as IOException</exception>
+            <exception cref="T:System.InvalidOperationException">If this load method is not supported.</exception>
+            <exception cref="T:System.IO.IOException">Problem with io stream</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderLoadFromStream">
+            <summary>
+            Package loader that can load a package completely from an open <see cref="T:System.IO.Stream"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderLoadFromStream.LoadFromStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Read package completely from <paramref name="stream"/> and return representation of contents as <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/>.
+            The implementation and the returned <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> does not take ownership of the stream. 
+            
+            The returned file provider can be left to be garbage collected and doesn't need to be disposed.
+            </summary>
+            <param name="stream">stream to read data from. Stream doesn't need to be closed by callee, but is allowed to do so.</param>
+            <param name="packageInfo">(optional) Information about packge that is being opened</param>
+            <returns>file provider</returns>
+            <exception cref="T:System.Exception">If there was unexpected error, such as IOException</exception>
+            <exception cref="T:System.InvalidOperationException">If this load method is not supported.</exception>
+            <exception cref="T:System.IO.IOException">Problem with io stream</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IPackageLoaderUseBytes">
+            <summary>
+            Package loader that can load a package completely from an bytes.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.IPackageLoaderUseBytes.UseBytes(System.Byte[],Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Load file provider from bytes.
+            
+            The caller is responsible for disposing the returned file provider if it implements <see cref="T:System.IDisposable"/>.
+            </summary>
+            <param name="data">data to read from</param>
+            <param name="packageInfo">(optional) Information about packge that is being opened</param>
+            <returns>file provider</returns>
+            <exception cref="T:System.Exception">If there was unexpected error, such as IOException</exception>
+            <exception cref="T:System.InvalidOperationException">If this load method is not supported.</exception>
+            <exception cref="T:System.IO.IOException">Problem with io stream</exception>
+            <exception cref="T:Lexical.FileProvider.Package.PackageException.LoadError">The when file format is erronous, package will not be opened as directory.</exception>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.IPackageLoadInfo">
+            <summary>
+            Optional hints about the package that is being loaded.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageLoadInfo.Path">
+            <summary>
+            (optional) Path within package file provider.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageLoadInfo.LastModified">
+            <summary>
+            (Optional) Last modified UTC date time.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.Package.IPackageLoadInfo.Length">
+            <summary>
+            File length, or -1 if unknown
+            </summary>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageLoaderExtensions">
+            <summary>
+            <see cref="T:Lexical.FileProvider.Package.IPackageLoader"/> extension methods.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageLoaderExtensions.GetExtensions(Lexical.FileProvider.Package.IPackageLoader)">
+            <summary>
+            Try to read supported file formats from the regular expression pattern.
+            </summary>
+            <param name="packageLoader"></param>
+            <returns>for example "dll"</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageLoaderExtensions.GetExtensions(System.Collections.Generic.IEnumerable{Lexical.FileProvider.Package.IPackageLoader})">
+            <summary>
+            Try to read supported file formats from the regular expression pattern.
+            </summary>
+            <param name="packageLoaders"></param>
+            <returns>for example "dll", "zip", ... </returns>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageLoaderExtensions.SortByExtension(System.Collections.Generic.IEnumerable{Lexical.FileProvider.Package.IPackageLoader})">
+            <summary>
+            Sort packageloaders by the file extensions they support.
+            </summary>
+            <param name="packageLoaders"></param>
+            <returns>map, e.g. { "dll", Dll.Singleton }</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageException">
+            <summary>
+            Generic <see cref="T:Lexical.FileProvider.Package.IPackageFileProvider" /> related exception.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.#ctor">
+            <summary>
+            Create exception.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.#ctor(System.String)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.#ctor(System.String,System.Exception)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageException.FileError">
+            <summary>
+            Generic file related error.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.Package.PackageException.FileError.FilePath">
+            <summary>
+            (Optional) File path that is associated to this error.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.FileError.#ctor(System.String)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.FileError.#ctor(System.String,System.String)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.FileError.#ctor(System.String,System.String,System.Exception)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.FileError.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Derialize exception from <paramref name="context"/>.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.FileError.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialize object data to <paramref name="context"/>.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageException.NoSuitableLoadCapability">
+            <summary>
+            Could not match <see cref="T:Lexical.FileProvider.Package.IPackageFileProviderOptions" /> and <see cref="T:Lexical.FileProvider.Package.IPackageLoader"/> capabilities.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.NoSuitableLoadCapability.#ctor(System.String)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.NoSuitableLoadCapability.#ctor(System.String,System.String)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.NoSuitableLoadCapability.#ctor(System.String,System.String,System.Exception)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.NoSuitableLoadCapability.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Derialize exception from <paramref name="context"/>.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Lexical.FileProvider.Package.PackageException.LoadError">
+            <summary>
+            Loading package failed.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.LoadError.#ctor(System.String)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.LoadError.#ctor(System.String,System.String)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.LoadError.#ctor(System.String,System.String,System.Exception)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.LoadError.#ctor(System.String,System.Exception)">
+            <summary>
+            Create exception.
+            </summary>
+            <param name="filePath"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.Package.PackageException.LoadError.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Derialize exception from <paramref name="context"/>.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+    </members>
+</doc>

@@ -5,23 +5,23 @@
 // --------------------------------------------------------
 using Lexical.FileProvider.Package;
 using Microsoft.Extensions.FileProviders;
-using SharpCompress.Archives.GZip;
+using SharpCompress.Archives.Zip;
 using System;
 using System.IO;
 
 namespace Lexical.FileProvider.PackageLoader
 {
     /// <summary>
-    /// Uses <see cref="GZipFileProvider"/> to open .gz files.
+    /// Uses <see cref="NuGetFileProvider"/> to open archive file.
     /// </summary>
-    public class GZip : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
+    public class NuGetZip : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
-        private static readonly GZip singleton = new GZip();
+        private static readonly NuGetZip singleton = new NuGetZip();
 
         /// <summary>
-        /// Static singleton instance that handles .gz extensions.
+        /// Static singleton instance that handles .zip extensions.
         /// </summary>
-        public static GZip Singleton => singleton;
+        public static NuGetZip Singleton => singleton;
 
         /// <summary>
         /// Supported file extensions
@@ -29,34 +29,40 @@ namespace Lexical.FileProvider.PackageLoader
         public string FileExtensionPattern { get; internal set; }
 
         /// <summary>
-        /// Create new package loader that loads .gz files.
+        /// Policy whether to convert '\' to '/' in the file entry paths.
         /// </summary>
-        public GZip() : this(@"\.gz|\.gzip") { }
+        private readonly bool convertBackslashesToSlashes;
 
         /// <summary>
-        /// Create new package loader that loads .gz files.
+        /// Create new package loader that loads NuGet files.
+        /// </summary>
+        public NuGetZip() : this(@"\.nupkg") { }
+
+        /// <summary>
+        /// Create new package loader that loads NuGet files.
         /// </summary>
         /// <param name="fileExtensionPattern">regular expression pattern</param>
-        public GZip(string fileExtensionPattern)
+        /// <param name="convertBackslashesToSlashes">if true converts '\' to '/'</param>
+        public NuGetZip(string fileExtensionPattern, bool convertBackslashesToSlashes = NuGetFileProvider.defaultConvertBackslashesToSlashes)
         {
             this.FileExtensionPattern = fileExtensionPattern ?? throw new ArgumentNullException(nameof(fileExtensionPattern));
+            this.convertBackslashesToSlashes = convertBackslashesToSlashes;
         }
 
         /// <summary>
-        /// Opens a .gz file with zero to multiple open file handles.
+        /// Opens a .zip file with zero to multiple open file handles.
         /// Is thread-safe and thread-scalable (concurrent use is possible).
         /// </summary>
         /// <param name="filepath"></param>
         /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
         /// <returns>file provider to the contents of the package</returns>
         /// <exception cref="IOException">On I/O error</exception>
-        /// <exception cref="PackageException.LoadError">on .gz error</exception>
+        /// <exception cref="PackageException.LoadError">on zip error</exception>
         public IFileProvider OpenFile(string filepath, IPackageLoadInfo packageInfo)
         {
-            string entryName = ExtractName(packageInfo?.Path) ?? fallbackEntryName;
             try
             {
-                return new GZipFileProvider(filepath, entryName, packageInfo?.Path, packageInfo?.LastModified);
+                return new NuGetFileProvider(filepath, packageInfo?.Path, packageInfo?.LastModified, convertBackslashesToSlashes);
             }
             catch (Exception e) when (e is InvalidDataException || e is FormatException || e is BadImageFormatException)
             {
@@ -65,24 +71,22 @@ namespace Lexical.FileProvider.PackageLoader
         }
 
         /// <summary>
-        /// Reads .gz file from a stream. Takes ownership of the stream (closes it). 
+        /// Reads zip file from a stream. Takes ownership of the stream (closes it). 
         /// Is thread-safe, but not thread-scalable (locks threads).
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="packageInfo">(optional) clues about the file that is being opened</param>
         /// <returns>file provider to the contents of the package</returns>
         /// <exception cref="IOException">On I/O error</exception>
-        /// <exception cref="PackageException.LoadError">on .gz error</exception>
+        /// <exception cref="PackageException.LoadError">on zip error</exception>
         public IFileProvider UseStream(Stream stream, IPackageLoadInfo packageInfo)
         {
-            string entryName = ExtractName(packageInfo?.Path) ?? fallbackEntryName;
             try
             {
-                return new GZipFileProvider(stream, entryName, packageInfo?.Path, packageInfo?.LastModified).AddDisposable(stream);
+                return new NuGetFileProvider(stream, packageInfo?.Path, packageInfo?.LastModified, convertBackslashesToSlashes).AddDisposable(stream);
             }
             catch (Exception e) when (e is InvalidDataException || e is FormatException || e is BadImageFormatException)
             {
-                try { stream.Dispose(); } catch (Exception) { }
                 throw new PackageException.LoadError(null, e);
             }
         }
@@ -95,40 +99,15 @@ namespace Lexical.FileProvider.PackageLoader
         /// <returns></returns>
         public IFileProvider UseBytes(byte[] data, IPackageLoadInfo packageInfo = null)
         {
-            string entryName = ExtractName(packageInfo?.Path) ?? fallbackEntryName;
             try
             {
-                GZipArchive opener() => GZipArchive.Open(new MemoryStream(data));
-                return new GZipFileProvider(opener, entryName, packageInfo?.Path, packageInfo?.LastModified);
+                ZipArchive opener() => ZipArchive.Open(new MemoryStream(data));
+                return new NuGetFileProvider(opener, packageInfo?.Path, packageInfo?.LastModified);
             }
             catch (Exception e) when (e is InvalidDataException || e is FormatException || e is BadImageFormatException)
             {
                 throw new PackageException.LoadError(null, e);
             }
-        }
-
-        /// <summary>
-        /// Name to use if entry name is not available.
-        /// </summary>
-        public const string fallbackEntryName = "file";
-
-        /// <summary>
-        /// Extracts filename for the content entry.
-        /// For example "mypath/document.txt.gz" -> "document.txt"
-        /// 
-        /// If path is not available returns "file"
-        /// </summary>
-        /// <param name="path">(optional)</param>
-        /// <returns></returns>
-        protected virtual string ExtractName(string path)
-        {
-            if (path == null || path == "") return null;
-            int startIx = path.LastIndexOf('/') + 1, endIx = path.LastIndexOf('.');
-            if (startIx < 0) startIx = 0;
-            if (endIx < 0) endIx = path.Length - 1;
-            if (endIx <= startIx) return null;
-            string result = path.Substring(startIx, endIx - startIx);
-            return result;
         }
 
     }

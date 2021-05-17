@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lexical.FileProvider.Dll</name>
+    </assembly>
+    <members>
+        <member name="T:Lexical.FileProvider.DllFileProvider">
+            <summary>
+            Provides the embedded resources of a managed .dll files. 
+            
+            Despite its name, the class can also provide from managed .exe files.
+            
+            Uses Mono.Cecil to load resources, so it won't load the assembly into the application domain.
+            This is useful since Reflection load doesn't work (at the time of writing) in .NET core. 
+            
+            This implementation has distinct difference to EmbeddedFileProvider.
+            EmbeddedFileProvider hides the assembly name part of the resource names. This implementation does not.
+            Hiding parts of the filename is problematic, as they are not compatible with the resource manifest.
+            Especially problematic when assembly has been merged from multiple assemblies.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.DllFileProvider.belatedDisposeList">
+            <summary>
+            Dispose list for belated disposables.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.DllFileProvider.module">
+            <summary>
+            .dll or .exe module loader.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.DllFileProvider.date">
+            <summary>
+            Datetime of the source file, or construction time if unknown.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.DllFileProvider.files">
+            <summary>
+            Cached file entries
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.DllFileProvider.Files">
+            <summary>
+            Property that creates file entries lazily.
+            
+            If ran concurrently, one evaluation will remain, and others will be garbage collected.
+            May occasionaly return different instances of same content to different threads, but that's 
+            not required in the IFileProvider contract. 
+            Evaluating same resources twice in rare occasional cases is about as good than locking it.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.DllFileProvider.fileMap">
+            <summary>
+            Cached file map
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.DllFileProvider.FileMap">
+            <summary>
+            Property that creates map lazily.
+            
+            If ran concurrently, one evaluation will remain, and others will be garbage collected.
+            May occasionaly return different instances of same content to different threads, but that's 
+            not required in the IFileProvider contract. 
+            Evaluating same resources twice in rare occasional cases is about as good than locking it.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.DllFileProvider.contents">
+            <summary>
+            Cached contents of the root
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.DllFileProvider.Contents">
+            <summary>
+            Lazy evaluation of the contents.
+            </summary>
+        </member>
+        <member name="F:Lexical.FileProvider.DllFileProvider.m_streamlock">
+            <summary>
+            Lock for reading streams.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.OpenFile(System.String,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Open module file, lock it for reading, and read resources as needed.
+            File provider must be disposed on exit.
+            </summary>
+            <param name="filename"></param>
+            <param name="datetime">(optional)</param>
+            <returns>File provider that must be disposed after use to release file</returns>
+            <exception cref="T:System.IO.FileLoadException">on load error</exception>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.UseStream(System.IO.Stream,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Open a file provider that reads modules from a stream. 
+            File provider takes ownership of the stream and disposes it along with the file provider.
+            File provider must be disposed by caller.
+            </summary>
+            <param name="stream"></param>
+            <param name="datetime">(optional)</param>
+            <returns>File provider that must be disposed after use to release file</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.#ctor(System.Object,System.Nullable{System.DateTimeOffset})">
+            <summary>
+            Construct file provider from <paramref name="module"/>.
+            </summary>
+            <param name="module">Instance of Mono.Cecil.ModuleDefinition</param>
+            <param name="datetime">(optional) overriding datetime</param>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.CreateEntries">
+            <summary>
+            Create an enumerable of resources
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.GetDirectoryContents(System.String)">
+            <summary>
+            Get directory contents
+            </summary>
+            <param name="subpath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.GetFileInfo(System.String)">
+            <summary>
+            Get file info
+            </summary>
+            <param name="subpath"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.Watch(System.String)">
+            <summary>
+            Watch directory
+            </summary>
+            <param name="filter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.innerDispose(System.Collections.Generic.List{System.Exception}@)">
+            <summary>
+            Dispose 
+            </summary>
+            <param name="disposeErrors"></param>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.AddDisposable(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider.
+            
+            If <paramref name="disposable"/> is not <see cref="T:System.IDisposable"/>, then it's not added.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.FileProvider.DllFileProvider.AddBelatedDispose(System.Object)">
+            <summary>
+            Add <paramref name="disposable"/> to be disposed along with the file provider after all streams are closed.
+            </summary>
+            <param name="disposable">object to dispose</param>
+            <returns></returns>
+        </member>
+        <member name="P:Lexical.FileProvider.EmbeddedResourceEntry.Exists">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.EmbeddedResourceEntry.Length">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.EmbeddedResourceEntry.PhysicalPath">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.EmbeddedResourceEntry.Name">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.EmbeddedResourceEntry.LastModified">
+            <inheritdoc/>
+        </member>
+        <member name="P:Lexical.FileProvider.EmbeddedResourceEntry.IsDirectory">
+            <inheritdoc/>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader.Dll">
+            <summary>
+            This class adds to <see cref="T:Lexical.FileProvider.Package.PackageFileProvider"/> the feature to open managed .dll and .exe files.
+            
+            To use this class, the caller must import NuGet library Lexical.FileProvider.Package.Abstractions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Dll.Singleton">
+            <summary>
+            Static singleton instance that opens managed .dll files.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Dll.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Dll.#ctor">
+            <summary>
+            Create new package loader that loads zip files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Dll.#ctor(System.String)">
+            <summary>
+            Create new package loader that loads zip files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Dll.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Open a .dll file.
+            </summary>
+            <param name="filename"></param>
+            <param name="packageInfo"></param>
+            <returns>file provider</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Dll.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Use <paramref name="stream"/> to access contents of a .dll file.
+            </summary>
+            <param name="stream"></param>
+            <param name="packageInfo"></param>
+            <returns>file provider</returns>
+        </member>
+        <member name="T:Lexical.FileProvider.PackageLoader.Exe">
+            <summary>
+            This class adds to <see cref="T:Lexical.FileProvider.Package.PackageFileProvider"/> the feature to open managed .Exe and .exe files.
+            
+            To use this class, the caller must import NuGet library Lexical.FileProvider.Package.Abstractions.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Exe.Singleton">
+            <summary>
+            Static singleton instance that opens managed .Exe files.
+            </summary>
+        </member>
+        <member name="P:Lexical.FileProvider.PackageLoader.Exe.FileExtensionPattern">
+            <summary>
+            Supported file extensions
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Exe.#ctor">
+            <summary>
+            Create new package loader that loads zip files.
+            </summary>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Exe.#ctor(System.String)">
+            <summary>
+            Create new package loader that loads zip files.
+            </summary>
+            <param name="fileExtensionPattern">regular expression pattern</param>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Exe.OpenFile(System.String,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Open a .dll file.
+            </summary>
+            <param name="filename"></param>
+            <param name="packageInfo"></param>
+            <returns>file provider</returns>
+        </member>
+        <member name="M:Lexical.FileProvider.PackageLoader.Exe.UseStream(System.IO.Stream,Lexical.FileProvider.Package.IPackageLoadInfo)">
+            <summary>
+            Use <paramref name="stream"/> to access contents of a .dll file.
+            </summary>
+            <param name="stream"></param>
+            <param name="packageInfo"></param>
+            <returns>file provider</returns>
+        </member>
+    </members>
+</doc>

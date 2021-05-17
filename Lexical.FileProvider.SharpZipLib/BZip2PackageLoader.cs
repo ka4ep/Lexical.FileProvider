@@ -17,7 +17,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// </summary>
     public class BZip2 : IPackageLoaderOpenFile, IPackageLoaderUseBytes
     {
-        private static BZip2 singleton = new BZip2();
+        private static readonly BZip2 singleton = new BZip2();
 
         /// <summary>
         /// Static singleton instance that handles .bzip2 extensions.

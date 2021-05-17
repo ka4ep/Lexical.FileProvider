@@ -16,7 +16,7 @@ namespace Lexical.FileProvider.PackageLoader
     /// </summary>
     public class Tar : IPackageLoaderOpenFile, IPackageLoaderUseStream, IPackageLoaderUseBytes
     {
-        private static Tar singleton = new Tar();
+        private static readonly Tar singleton = new Tar();
 
         /// <summary>
         /// Static singleton instance that handles .tar extensions.
@@ -31,7 +31,7 @@ namespace Lexical.FileProvider.PackageLoader
         /// <summary>
         /// Policy whether to convert '\' to '/' in the file paths that this package loader handles.
         /// </summary>
-        bool convertBackslashesToSlashes;
+        private readonly bool convertBackslashesToSlashes;
 
         /// <summary>
         /// Create new package loader that loads .tar files.
@@ -101,7 +101,7 @@ namespace Lexical.FileProvider.PackageLoader
         {
             try
             {
-                Func<TarArchive> opener = () => TarArchive.Open(new MemoryStream(data));
+                TarArchive opener() => TarArchive.Open(new MemoryStream(data));
                 return new TarFileProvider(opener, packageInfo?.Path, packageInfo?.LastModified);
             }
             catch (Exception e) when (e is InvalidDataException || e is FormatException || e is BadImageFormatException)
